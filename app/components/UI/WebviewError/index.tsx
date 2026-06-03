@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Image, StyleSheet, View, Text } from 'react-native';

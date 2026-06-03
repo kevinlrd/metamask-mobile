@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/default-param-last */
 /* eslint-disable import-x/no-commonjs */
 import URL from 'url-parse';
 import {

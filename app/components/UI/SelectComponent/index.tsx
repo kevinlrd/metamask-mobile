@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/check-indentation */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import {

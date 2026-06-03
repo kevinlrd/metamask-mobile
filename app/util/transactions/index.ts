@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/check-indentation, jsdoc/check-syntax */
 import { addHexPrefix } from 'ethereumjs-util';
 import BN from 'bnjs4';
 import { rawEncode, rawDecode } from 'ethereumjs-abi';

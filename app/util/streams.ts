@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable import-x/no-commonjs */
 const Through = require('through2');
 const ObjectMultiplex = require('@metamask/object-multiplex');

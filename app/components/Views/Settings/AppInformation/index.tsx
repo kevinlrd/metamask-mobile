@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable dot-notation */
 import React, { PureComponent } from 'react';
 import { HeaderStandard } from '@metamask/design-system-react-native';

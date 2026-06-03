@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/default-param-last */
 import { hexToBN } from '@metamask/controller-utils';
 import { ETH, GWEI, WEI } from './custom-gas';
 import {

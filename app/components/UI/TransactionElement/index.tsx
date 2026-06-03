@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import React, { PureComponent, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {

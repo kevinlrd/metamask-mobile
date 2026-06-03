@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/default-param-last */
 /**
  * Collection of utility functions for consistent formatting and conversion
  */
