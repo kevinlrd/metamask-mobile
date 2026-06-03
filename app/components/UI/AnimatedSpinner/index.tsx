@@ -159,7 +159,9 @@ export default class AnimatedSpinner extends PureComponent<
 
   render() {
     const { size = SpinnerSize.MD } = this.props;
-    const colors = this.context.colors || mockTheme.colors;
+    const colors =
+      (this.context as { colors?: Record<string, Record<string, string>> })
+        .colors || mockTheme.colors;
     const styles = createStyles(colors, measures[size]);
     const spin = this.spinValue.interpolate({
       inputRange: [0, 1],
