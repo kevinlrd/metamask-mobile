@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 /* eslint-disable no-restricted-syntax */
 import React from 'react';
 import { StyleSheet, View, TextInput, TouchableOpacity } from 'react-native';

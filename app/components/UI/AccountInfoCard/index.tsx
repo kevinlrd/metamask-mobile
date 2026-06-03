@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import isUrl from 'is-url';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';

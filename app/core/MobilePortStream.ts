@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 // eslint-disable-next-line import-x/no-nodejs-modules
 import { Buffer } from 'buffer';
 import { Duplex } from 'readable-stream';

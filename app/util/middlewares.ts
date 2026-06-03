@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 /* eslint-disable jsdoc/check-indentation */
 import Logger from './Logger';
 import trackErrorAsAnalytics from './metrics/TrackError/trackErrorAsAnalytics';

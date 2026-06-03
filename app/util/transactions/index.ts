@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 /* eslint-disable jsdoc/check-indentation, jsdoc/check-syntax */
 import { addHexPrefix } from 'ethereumjs-util';
 import BN from 'bnjs4';

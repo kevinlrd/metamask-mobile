@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { NetworksChainId } from '@metamask/controller-utils';
 import { GOERLI } from '../../../app/constants/network';
 

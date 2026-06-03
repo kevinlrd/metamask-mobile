@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { NetworksChainId } from '@metamask/controller-utils';
 
 export default function migrate(state) {

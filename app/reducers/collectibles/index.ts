@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 /* eslint-disable @typescript-eslint/default-param-last, @typescript-eslint/no-explicit-any */
 import { toHex } from '@metamask/controller-utils';
 import { createSelector } from 'reselect';

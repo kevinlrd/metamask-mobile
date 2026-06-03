@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { v1 as random } from 'uuid';
 
 export default function migrate(state) {

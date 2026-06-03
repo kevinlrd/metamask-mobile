@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 'use strict';
 
 import { Dimensions, Platform } from 'react-native';

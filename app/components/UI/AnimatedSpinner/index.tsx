@@ -1,9 +1,27 @@
 /* eslint-disable react/prop-types */
 import React, { PureComponent } from 'react';
-import { View, Animated, Easing, StyleSheet } from 'react-native';
+import {
+  View,
+  Animated,
+  Easing,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+  ImageStyle,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Device from '../../../util/device';
 import { ThemeContext, mockTheme } from '../../../util/theme';
+
+interface AnimatedSpinnerProps {
+  size?: string;
+}
+
+interface AnimatedSpinnerState {
+  spinning: boolean;
+}
+
+type StyleObj = ViewStyle | TextStyle | ImageStyle;
 
 export const SpinnerSize = {
   MD: 'MD',
@@ -62,7 +80,10 @@ const measures = {
   },
 };
 
-const createStyles = (colors, measures) =>
+const createStyles = (
+  colors: Record<string, Record<string, string>>,
+  measures: Record<string, Record<string, number>>,
+) =>
   StyleSheet.create({
     view: {
       position: 'relative',
@@ -87,10 +108,14 @@ const createStyles = (colors, measures) =>
  * instead. This component relies on the deprecated `react-native-vector-icons`
  * package and predates the design-system spinner.
  */
-export default class AnimatedSpinner extends PureComponent {
+export default class AnimatedSpinner extends PureComponent<
+  AnimatedSpinnerProps,
+  AnimatedSpinnerState
+> {
   spinValue = new Animated.Value(0);
+  mounted = false;
 
-  state = {
+  state: AnimatedSpinnerState = {
     spinning: false,
   };
 

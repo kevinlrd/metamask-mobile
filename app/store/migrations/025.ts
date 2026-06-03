@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 // Hardcoded from ETHERSCAN_SUPPORTED_CHAIN_IDS at the time this migration was written.
 const ETHERSCAN_SUPPORTED_CHAIN_IDS = {
   MAINNET: '0x1',

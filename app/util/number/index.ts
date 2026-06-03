@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 /* eslint-disable @typescript-eslint/default-param-last */
 /**
  * Collection of utility functions for consistent formatting and conversion

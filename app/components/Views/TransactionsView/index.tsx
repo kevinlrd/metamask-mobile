@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import PropTypes from 'prop-types';

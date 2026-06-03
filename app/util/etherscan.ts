@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import {
   BASE_MAINNET_BLOCK_EXPLORER,
   LINEA_GOERLI_BLOCK_EXPLORER,

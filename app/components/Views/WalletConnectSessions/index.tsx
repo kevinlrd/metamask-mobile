@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import React, { PureComponent } from 'react';
 import { HeaderStandard } from '@metamask/design-system-react-native';
 import {

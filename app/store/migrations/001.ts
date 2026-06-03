@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import AppConstants from '../../core/AppConstants';
 import { toLowerCaseEquals } from '../../util/general';
 

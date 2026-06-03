@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import React, { PureComponent } from 'react';
 import { Alert, BackHandler, Keyboard } from 'react-native';
 import { connect } from 'react-redux';

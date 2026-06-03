@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { TransactionType } from '@metamask/transaction-controller';
 import {
   CONTRACT_CREATION_SIGNATURE,

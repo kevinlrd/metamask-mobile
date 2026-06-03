@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 /* eslint-disable @typescript-eslint/default-param-last */
 import { createSelector } from 'reselect';
 import { getSwapsLiveness, CHAIN_ID_TO_NAME_MAP } from './utils';

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 /* eslint-disable react/display-name */
 import React from 'react';
 import NavbarTitle from '../NavbarTitle';

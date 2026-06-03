@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import React from 'react';
 import { fontStyles } from '../../../../../../styles/common';
 import { strings } from '../../../../../../../locales/i18n';

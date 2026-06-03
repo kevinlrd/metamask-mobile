@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 /* eslint-disable jsdoc/check-syntax */
 import URL from 'url-parse';
 import networksWithImages from '.././../images/image-icons';

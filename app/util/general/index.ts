@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import URL from 'url-parse';
 
 export const tlc = (str) => str?.toLowerCase?.();

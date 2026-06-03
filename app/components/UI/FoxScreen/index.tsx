@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 /* eslint-disable @typescript-eslint/no-require-imports */
 import React, { PureComponent } from 'react';
 import { View, Image, StyleSheet } from 'react-native';

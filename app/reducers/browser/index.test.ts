@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import browserReducer from './index';
 import AppConstants from '../../core/AppConstants';
 

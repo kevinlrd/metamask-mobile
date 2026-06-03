@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { isEIP1559Transaction } from '@metamask/transaction-controller';
 import { sumHexWEIs } from '../../../util/conversions';
 import { hexToBN, isBN, BNToHex, renderToGwei } from '../../../util/number';

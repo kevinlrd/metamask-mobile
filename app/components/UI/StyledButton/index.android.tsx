@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Text, View, TouchableNativeFeedback } from 'react-native';

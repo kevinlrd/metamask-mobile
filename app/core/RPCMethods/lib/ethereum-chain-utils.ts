@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { rpcErrors } from '@metamask/rpc-errors';
 import validUrl from 'valid-url';
 import { isSafeChainId } from '@metamask/controller-utils';

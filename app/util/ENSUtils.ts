@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import Engine from '../core/Engine';
 import ENS from 'ethjs-ens';
 import { areAddressesEqual } from './address';

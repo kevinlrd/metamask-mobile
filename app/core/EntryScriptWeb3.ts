@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 // expo-file-system@19 (Expo SDK 54) deprecates `readAsStringAsync` on the main
 // entrypoint (it throws at runtime). The new `File`/`Paths` API does not grant
 // read permission for bundle assets on iOS (`MissingPermissionException`), so

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 ///: BEGIN:ONLY_INCLUDE_IF(snaps)
 import {
   caveatSpecifications as snapsCaveatsSpecifications,

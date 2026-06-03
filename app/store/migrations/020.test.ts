@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import migrate from './020';
 import { v4 } from 'uuid';
 

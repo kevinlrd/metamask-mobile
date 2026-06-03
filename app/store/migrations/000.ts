@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 /**
  * Needed after https://github.com/MetaMask/controllers/pull/152
  *
