@@ -1,7 +1,27 @@
+/* eslint-disable @typescript-eslint/default-param-last */
 import AppConstants from '../../core/AppConstants';
 import { AvatarAccountType } from '../../component-library/components/Avatars/Avatar/variants/AvatarAccount/AvatarAccount.types';
+import type { SettingsAction } from '../../actions/settings';
 
-const initialState = {
+export interface SettingsState {
+  searchEngine: string;
+  primaryCurrency: string;
+  lockTime: number;
+  avatarAccountType: AvatarAccountType;
+  hideZeroBalanceTokens: boolean;
+  basicFunctionalityEnabled: boolean;
+  deepLinkModalDisabled: boolean;
+  hapticsEnabled: boolean;
+  perpsChartPreferences: {
+    preferredCandlePeriod: string;
+  };
+  showHexData?: boolean;
+  showFiatOnTestnets?: boolean;
+  deviceNotificationEnabled?: boolean;
+  tokenSortConfig?: Record<string, unknown>;
+}
+
+const initialState: SettingsState = {
   searchEngine: AppConstants.DEFAULT_SEARCH_ENGINE,
   primaryCurrency: 'ETH',
   lockTime: -1, // Disabled by default,
@@ -16,7 +36,10 @@ const initialState = {
   },
 };
 
-const settingsReducer = (state = initialState, action) => {
+const settingsReducer = (
+  state: SettingsState = initialState,
+  action: SettingsAction,
+): SettingsState => {
   switch (action.type) {
     case 'SET_SEARCH_ENGINE':
       return {

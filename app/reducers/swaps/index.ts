@@ -1,37 +1,54 @@
+/* eslint-disable @typescript-eslint/default-param-last */
 import { createSelector } from 'reselect';
 import { getSwapsLiveness, CHAIN_ID_TO_NAME_MAP } from './utils';
 import { invert, omit } from 'lodash';
 import { toHex } from '@metamask/controller-utils';
 
-export const getFeatureFlagChainId = (chainId) => chainId;
+export const getFeatureFlagChainId = (chainId: string): string => chainId;
 
 // * Constants
 export const SWAPS_SET_LIVENESS = 'SWAPS_SET_LIVENESS';
 export const SWAPS_SET_HAS_ONBOARDED = 'SWAPS_SET_HAS_ONBOARDED';
 
 // * Action Creator
-export const setSwapsLiveness = (chainId, featureFlags) => ({
-  type: SWAPS_SET_LIVENESS,
+export const setSwapsLiveness = (
+  chainId: string,
+  featureFlags: Record<string, unknown>,
+) => ({
+  type: SWAPS_SET_LIVENESS as typeof SWAPS_SET_LIVENESS,
   payload: { chainId, featureFlags },
 });
-export const setSwapsHasOnboarded = (hasOnboarded) => ({
-  type: SWAPS_SET_HAS_ONBOARDED,
+export const setSwapsHasOnboarded = (hasOnboarded: boolean) => ({
+  type: SWAPS_SET_HAS_ONBOARDED as typeof SWAPS_SET_HAS_ONBOARDED,
   payload: hasOnboarded,
 });
 
 // * Selectors
-const swapsStateSelector = (state) => state.swaps;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const swapsStateSelector = (state: any) => state.swaps;
 
 /**
  * Returns the swaps onboarded state
  */
 export const swapsHasOnboardedSelector = createSelector(
   swapsStateSelector,
-  (swapsState) => swapsState.hasOnboarded,
+  (swapsState: SwapsState) => swapsState.hasOnboarded,
 );
 
+interface ChainSwapsState {
+  isLive: boolean;
+  featureFlags: Record<string, unknown> | undefined;
+}
+
+export interface SwapsState {
+  isLive: boolean;
+  hasOnboarded: boolean;
+  featureFlags: Record<string, unknown> | undefined;
+  [chainId: string]: unknown;
+}
+
 // * Reducer
-export const initialState = {
+export const initialState: SwapsState = {
   isLive: true, // TODO: should we remove it?
   hasOnboarded: true, // TODO: Once we have updated UI / content for the modal, we should enable it again.
 
@@ -42,15 +59,30 @@ export const initialState = {
   },
 };
 
-function swapsReducer(state = initialState, action) {
+interface SetLivenessAction {
+  type: typeof SWAPS_SET_LIVENESS;
+  payload: { chainId: string; featureFlags: Record<string, unknown> | null };
+}
+
+interface SetHasOnboardedAction {
+  type: typeof SWAPS_SET_HAS_ONBOARDED;
+  payload: boolean;
+}
+
+type SwapsAction = SetLivenessAction | SetHasOnboardedAction;
+
+function swapsReducer(
+  state: SwapsState = initialState,
+  action: SwapsAction,
+): SwapsState {
   switch (action.type) {
     case SWAPS_SET_LIVENESS: {
       const { chainId: rawChainId, featureFlags } = action.payload;
       const chainId = getFeatureFlagChainId(rawChainId);
 
-      const data = state[chainId];
+      const data = state[chainId] as ChainSwapsState | undefined;
 
-      const chainNoFlags = {
+      const chainNoFlags: ChainSwapsState = {
         ...data,
         featureFlags: undefined,
         isLive: false,
@@ -65,11 +97,14 @@ function swapsReducer(state = initialState, action) {
         };
       }
 
-      const newState = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const featureFlagsRecord = featureFlags as Record<string, any>;
+
+      const newState: SwapsState = {
         ...state,
         featureFlags: {
-          smart_transactions: featureFlags.smart_transactions,
-          smartTransactions: featureFlags.smartTransactions,
+          smart_transactions: featureFlagsRecord.smart_transactions,
+          smartTransactions: featureFlagsRecord.smartTransactions,
         },
       };
 
@@ -84,19 +119,25 @@ function swapsReducer(state = initialState, action) {
       const chainNameToIdMap = invert(noTestnetChainIdToNameMap);
 
       // Save chain-specific feature flags for each chain
-      Object.keys(featureFlags).forEach((chainName) => {
+      Object.keys(featureFlagsRecord).forEach((chainName) => {
         const chainIdForName = chainNameToIdMap[chainName];
 
         if (
           chainIdForName &&
-          featureFlags[chainName] &&
-          typeof featureFlags[chainName] === 'object'
+          featureFlagsRecord[chainName] &&
+          typeof featureFlagsRecord[chainName] === 'object'
         ) {
-          const chainFeatureFlags = featureFlags[chainName];
-          const chainLiveness = getSwapsLiveness(featureFlags, chainIdForName);
+          const chainFeatureFlags = featureFlagsRecord[chainName] as Record<
+            string,
+            unknown
+          >;
+          const chainLiveness = getSwapsLiveness(
+            featureFlagsRecord,
+            chainIdForName,
+          );
 
           newState[chainIdForName] = {
-            ...state[chainIdForName],
+            ...(state[chainIdForName] as ChainSwapsState | undefined),
             featureFlags: chainFeatureFlags,
             isLive: chainLiveness,
           };

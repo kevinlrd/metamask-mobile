@@ -1,8 +1,38 @@
-import { BrowserActionTypes } from '../../actions/browser';
+/* eslint-disable @typescript-eslint/default-param-last */
+import { BrowserActionTypes, type BrowserAction } from '../../actions/browser';
 import AppConstants from '../../core/AppConstants';
 import { appendURLParams } from '../../util/browser';
 
-const initialState = {
+interface BrowserTab {
+  id: number;
+  url: string;
+  linkType?: string;
+  lastActiveAt?: number;
+  isArchived?: boolean;
+  image?: string;
+}
+
+interface Favicon {
+  origin: string;
+  url: string;
+}
+
+interface HistoryEntry {
+  url: string;
+  name: string;
+}
+
+export interface BrowserState {
+  history: HistoryEntry[];
+  whitelist: string[];
+  tabs: BrowserTab[];
+  favicons: Favicon[];
+  activeTab: number | null;
+  visitedDappsByHostname: Record<string, boolean>;
+  isFullscreen: boolean;
+}
+
+const initialState: BrowserState = {
   history: [],
   whitelist: [],
   tabs: [],
@@ -12,7 +42,10 @@ const initialState = {
   visitedDappsByHostname: {},
   isFullscreen: false,
 };
-const browserReducer = (state = initialState, action) => {
+const browserReducer = (
+  state: BrowserState = initialState,
+  action: BrowserAction,
+): BrowserState => {
   switch (action.type) {
     case BrowserActionTypes.ADD_TO_VIEWED_DAPP: {
       const { hostname } = action;
