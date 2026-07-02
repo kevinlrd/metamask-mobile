@@ -281,6 +281,9 @@ describe('AccountApproval', () => {
       }),
     );
     expect(onCancel).toHaveBeenCalled();
-    expect(mockRemoveChannel).toHaveBeenCalledWith('test-channel-id', true);
+    expect(mockRemoveChannel).toHaveBeenCalledWith({
+      channelId: 'test-channel-id',
+      sendTerminate: true,
+    });
   });
 });
