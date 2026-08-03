@@ -12,7 +12,7 @@ import {
   requestPermissionsHandler,
   revokePermissionsHandler,
 } from '@metamask/eip1193-permission-middleware';
-import RPCMethods from './index.js';
+import RPCMethods from './index';
 import { toHex } from '@metamask/controller-utils';
 import {
   PermissionController,

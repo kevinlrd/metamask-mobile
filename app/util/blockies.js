@@ -435,5 +435,3 @@
 class Blockies {
   static cache = {};
 }
-
-
