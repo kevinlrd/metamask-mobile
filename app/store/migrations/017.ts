@@ -1,0 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+export default function migrate(state) {
+  if (state.networkOnboarded && state.networkOnboarded.networkOnboardedState) {
+    state.networkOnboarded.networkOnboardedState = {};
+  }
+  return state;
+}

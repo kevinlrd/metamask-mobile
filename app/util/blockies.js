@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-use-before-define, @typescript-eslint/prefer-for-of, eqeqeq, no-var, prefer-rest-params */
 (function (global, factory) {
   exports && typeof exports === 'object' && typeof module !== 'undefined'
     ? factory(exports)
     : typeof define === 'function' && define.amd
-    ? define(['exports'], factory)
-    : factory((global.blockies = {}));
+      ? define(['exports'], factory)
+      : factory((global.blockies = {}));
 })(this, (exports) => {
   'use strict';
 
@@ -216,8 +217,7 @@
         let crc = -1;
         for (let i = 4; i < size - 4; i += 1) {
           crc =
-            _crc32[(crc ^ png[offs + i]) & 0xff] ^
-            ((crc >> 8) & 0x00ffffff);
+            _crc32[(crc ^ png[offs + i]) & 0xff] ^ ((crc >> 8) & 0x00ffffff);
         }
         write(png, offs + size - 4, byte4(crc ^ -1));
       }
@@ -266,7 +266,7 @@
   function hsl2rgb(h, s, l) {
     // Create cache key
     const key = `${h.toFixed(3)},${s.toFixed(3)},${l.toFixed(3)}`;
-    
+
     if (hslToRgbCache.has(key)) {
       return hslToRgbCache.get(key);
     }
@@ -283,14 +283,19 @@
       b = hue2rgb(p, q, h - 1 / 3);
     }
 
-    const result = new Uint8Array([Math.round(r * 255), Math.round(g * 255), Math.round(b * 255), 255]);
-    
+    const result = new Uint8Array([
+      Math.round(r * 255),
+      Math.round(g * 255),
+      Math.round(b * 255),
+      255,
+    ]);
+
     // Implement simple LRU: remove oldest if cache is full
     if (hslToRgbCache.size >= MAX_HSL_CACHE_SIZE) {
       const firstKey = hslToRgbCache.keys().next().value;
       hslToRgbCache.delete(firstKey);
     }
-    
+
     hslToRgbCache.set(key, result);
     return result;
   }
@@ -331,8 +336,6 @@
     return [h / 360, s / 100, l / 100];
   }
 
-
-
   function createImageData(size) {
     const width = size; // Only support square icons for now
     const height = size;
@@ -342,7 +345,7 @@
 
     const data = new Uint8Array(size * size);
     let dataIndex = 0;
-    
+
     for (let y = 0; y < height; y++) {
       const row = new Uint8Array(width);
       for (let x = 0; x < dataWidth; x++) {

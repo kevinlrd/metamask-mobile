@@ -32,7 +32,7 @@ import {
 } from '../../../../util/browser/index.ts';
 // Internal dependencies.
 import { PermissionsRequest } from '@metamask/permission-controller';
-import PhishingModal from '../../../UI/PhishingModal/index.js';
+import PhishingModal from '../../../UI/PhishingModal/index';
 import { useAnalytics } from '../../../hooks/useAnalytics/useAnalytics';
 import Routes from '../../../../constants/navigation/Routes.ts';
 import {
@@ -57,7 +57,7 @@ import {
   AvatarSize,
   AvatarVariant,
 } from '../../../../component-library/components/Avatars/Avatar';
-import { getNetworkImageSource } from '../../../../util/networks/index.js';
+import { getNetworkImageSource } from '../../../../util/networks/index';
 import {
   EvmAndMultichainNetworkConfigurationsWithCaipChainId,
   getSelectedMultichainNetwork,
@@ -103,7 +103,7 @@ import { useSDKV2Connection } from '../../../hooks/useSDKV2Connection';
 import { useAccountGroupsForPermissions } from '../../../hooks/useAccountGroupsForPermissions/useAccountGroupsForPermissions.ts';
 // eslint-disable-next-line import-x/no-restricted-paths -- TODO(ADR-0020): route-isolation backlog
 import NetworkConnectMultiSelector from '../../NetworkConnect/NetworkConnectMultiSelector/index.ts';
-import { TESTNET_CAIP_IDS } from '../../../../constants/network.js';
+import { TESTNET_CAIP_IDS } from '../../../../constants/network';
 import { getCaip25AccountIdsFromAccountGroupAndScope } from '../../../../util/multichain/getCaip25AccountIdsFromAccountGroupAndScope.ts';
 import { isSnapId } from '@metamask/snaps-utils';
 
