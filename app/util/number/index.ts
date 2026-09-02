@@ -1,11 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/default-param-last -- TODO: Replace legacy numeric unions with shared bigint-compatible types. */
 /**
  * Collection of utility functions for consistent formatting and conversion
  */
 import { stripHexPrefix } from 'ethereumjs-util';
 import BN4 from 'bnjs4';
 import { utils as ethersUtils } from 'ethers';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@met... Remove this comment to see the full error message
 import convert from '@metamask/ethjs-unit';
 import { add0x, remove0x } from '@metamask/utils';
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'numb... Remove this comment to see the full error message
 import numberToBN from 'number-to-bn';
 import BigNumber from 'bignumber.js';
 
@@ -30,9 +33,9 @@ const BIG_NUMBER_ETH_MULTIPLIER = new BigNumber('1');
  * @param inputHex - Number represented as a hex string.
  * @returns A BN instance.
  */
-export const hexToBN = (inputHex) =>
+export const hexToBN = (inputHex: unknown): BN4 =>
   typeof inputHex !== 'string'
-    ? new BN4(inputHex, 16)
+    ? new BN4(inputHex as ConstructorParameters<typeof BN4>[0], 16)
     : inputHex
       ? new BN4(remove0x(inputHex), 16)
       : new BN4(0);
@@ -46,7 +49,7 @@ export const hexToBN = (inputHex) =>
  */
 // TODO: Either fix this lint violation or explain why it's necessary to ignore.
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function BNToHex(inputBn) {
+export function BNToHex(inputBn: any) {
   return add0x(inputBn.toString(16));
 }
 
@@ -55,29 +58,29 @@ export function BNToHex(inputBn) {
  * @deprecated Use toBigNumber instead from utils/number/bigint
  */
 export const toBigNumber = {
-  hex: (n) => new BigNumber(stripHexPrefix(n), 16),
-  dec: (n) => new BigNumber(String(n), 10),
-  BN: (n) => new BigNumber(n.toString(16), 16),
+  hex: (n: any) => new BigNumber(stripHexPrefix(n), 16),
+  dec: (n: any) => new BigNumber(String(n), 10),
+  BN: (n: any) => new BigNumber(n.toString(16), 16),
 };
 
 /**
  * @deprecated Use toNormalizedDenomination instead from utils/number/bigint
  */
 const toNormalizedDenomination = {
-  WEI: (bigNumber) => bigNumber.div(BIG_NUMBER_WEI_MULTIPLIER),
-  GWEI: (bigNumber) => bigNumber.div(BIG_NUMBER_GWEI_MULTIPLIER),
-  ETH: (bigNumber) => bigNumber.div(BIG_NUMBER_ETH_MULTIPLIER),
+  WEI: (bigNumber: any) => bigNumber.div(BIG_NUMBER_WEI_MULTIPLIER),
+  GWEI: (bigNumber: any) => bigNumber.div(BIG_NUMBER_GWEI_MULTIPLIER),
+  ETH: (bigNumber: any) => bigNumber.div(BIG_NUMBER_ETH_MULTIPLIER),
 };
 
 /**
  * @deprecated Use toSpecifiedDenomination instead from utils/number/bigint
  */
 const toSpecifiedDenomination = {
-  WEI: (bigNumber) =>
+  WEI: (bigNumber: any) =>
     bigNumber.times(BIG_NUMBER_WEI_MULTIPLIER).decimalPlaces(0),
-  GWEI: (bigNumber) =>
+  GWEI: (bigNumber: any) =>
     bigNumber.times(BIG_NUMBER_GWEI_MULTIPLIER).decimalPlaces(9),
-  ETH: (bigNumber) =>
+  ETH: (bigNumber: any) =>
     bigNumber.times(BIG_NUMBER_ETH_MULTIPLIER).decimalPlaces(9),
 };
 
@@ -85,9 +88,9 @@ const toSpecifiedDenomination = {
  * @deprecated Use baseChange instead from utils/number/bigint
  */
 const baseChange = {
-  hex: (n) => n.toString(16),
-  dec: (n) => new BigNumber(n).toString(10),
-  BN: (n) => new BN4(n.toString(16)),
+  hex: (n: any) => n.toString(16),
+  dec: (n: any) => new BigNumber(n).toString(10),
+  BN: (n: any) => new BN4(n.toString(16)),
 };
 
 /**
@@ -97,7 +100,7 @@ const baseChange = {
  * @param {string} str - The string to prefix.
  * @returns {string} The prefixed string.
  */
-export const addHexPrefix = (str) => {
+export const addHexPrefix = (str: any) => {
   if (typeof str !== 'string' || str.match(regex.hexPrefix)) {
     return str;
   }
@@ -121,7 +124,7 @@ export const addHexPrefix = (str) => {
  * @param {string} unit - Unit to convert to, ether by default
  * @returns {string} - String containing the new number
  */
-export function fromWei(value = 0, unit = 'ether') {
+export function fromWei(value: unknown = 0, unit = 'ether'): string {
   return convert.fromWei(value, unit);
 }
 
@@ -135,8 +138,8 @@ export function fromWei(value = 0, unit = 'ether') {
  * @returns {string} - String containing the new number
  */
 export function fromTokenMinimalUnit(
-  minimalInput,
-  decimals,
+  minimalInput: any,
+  decimals: any,
   isRounding = true,
 ) {
   minimalInput = isRounding ? Number(minimalInput) : minimalInput;
@@ -169,7 +172,7 @@ export function fromTokenMinimalUnit(
  * @param {number} decimals - Token decimals to convert
  * @returns {string} - String containing the new number
  */
-export function fromTokenMinimalUnitString(minimalInput, decimals) {
+export function fromTokenMinimalUnitString(minimalInput: any, decimals: any) {
   if (typeof minimalInput !== 'string') {
     throw new TypeError('minimalInput must be a string');
   }
@@ -192,7 +195,9 @@ export function fromTokenMinimalUnitString(minimalInput, decimals) {
  * @param {number} decimals - Unit to convert from, ether by default
  * @returns {BN} - BN instance containing the new number
  */
-export function toTokenMinimalUnit(tokenValue, decimals) {
+// TODO: Replace "any" with a shared BN type compatible with legacy consumers.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function toTokenMinimalUnit(tokenValue: any, decimals: any): any {
   const base = toBN(Math.pow(10, decimals).toString());
   let value = convert.numberToString(tokenValue);
   const negative = value.substring(0, 1) === '-';
@@ -250,7 +255,7 @@ export function toTokenMinimalUnit(tokenValue, decimals) {
  * @param {string | number} value - The value to normalize.
  * @returns {string} - The normalized value.
  */
-export const normalizeToDotDecimal = (value) => {
+export const normalizeToDotDecimal = (value: any) => {
   const s = String(value ?? '0').trim();
 
   // keep only digits, separators, and sign
@@ -283,8 +288,8 @@ export const normalizeToDotDecimal = (value) => {
  * If value is less than 5 precision decimals will show '< 0.00001'
  */
 export function renderFromTokenMinimalUnit(
-  tokenValue,
-  decimals,
+  tokenValue: any,
+  decimals: any,
   decimalsToShow = 5,
 ) {
   const minimalUnit = fromTokenMinimalUnit(tokenValue || 0, decimals);
@@ -313,9 +318,9 @@ export function renderFromTokenMinimalUnit(
  * If value is less than 5 precision decimals will show '< 0.00001'
  */
 export function renderFiatAddition(
-  transferFiat,
-  feeFiat,
-  currentCurrency,
+  transferFiat: any,
+  feeFiat: any,
+  currentCurrency: any,
   decimalsToShow = 5,
 ) {
   const addition = transferFiat + feeFiat;
@@ -326,7 +331,9 @@ export function renderFiatAddition(
     const base = Math.pow(10, decimalsToShow);
     renderMinimalUnit = (Math.round(addition * base) / base).toString();
   }
+  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   if (currencySymbols[currentCurrency]) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     return `${currencySymbols[currentCurrency]}${renderMinimalUnit}`;
   }
   return `${renderMinimalUnit} ${currentCurrency}`;
@@ -339,7 +346,7 @@ export function renderFiatAddition(
  * @param {number} maxDecimalPlaces
  * @returns {string}
  */
-export function limitToMaximumDecimalPlaces(num, maxDecimalPlaces = 5) {
+export function limitToMaximumDecimalPlaces(num: any, maxDecimalPlaces = 5) {
   if (isNaN(num) || isNaN(maxDecimalPlaces)) {
     return num;
   }
@@ -361,7 +368,7 @@ export const MINIMUM_DISPLAY_THRESHOLD = 0.00001;
  * @param {number} maxDecimalPlaces - Maximum decimal places to show (default 5)
  * @returns {string} - Formatted number string
  */
-export function formatAmountWithThreshold(num, maxDecimalPlaces = 5) {
+export function formatAmountWithThreshold(num: any, maxDecimalPlaces = 5) {
   if (num < MINIMUM_DISPLAY_THRESHOLD && num > 0) {
     return `< ${MINIMUM_DISPLAY_THRESHOLD}`;
   }
@@ -379,15 +386,16 @@ export function formatAmountWithThreshold(num, maxDecimalPlaces = 5) {
  * @returns {Object} - The converted balance as BN instance
  */
 export function fiatNumberToTokenMinimalUnit(
-  fiat,
-  conversionRate,
-  exchangeRate,
-  decimals,
+  fiat: any,
+  conversionRate: any,
+  exchangeRate: any,
+  decimals: any,
 ) {
   const floatFiatConverted = parseFloat(fiat) / (conversionRate * exchangeRate);
   const base = Math.pow(10, decimals);
   let weiNumber = floatFiatConverted * base;
   // avoid decimals
+  // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'number'.
   weiNumber = weiNumber.toLocaleString('fullwide', { useGrouping: false });
   const weiBN = safeNumberToBN(weiNumber);
   return weiBN;
@@ -402,7 +410,7 @@ export function fiatNumberToTokenMinimalUnit(
  * @returns {String} - Number of token minimal unit, in render format
  * If value is less than 5 precision decimals will show '< 0.00001'
  */
-export function renderFromWei(value, decimalsToShow = 5) {
+export function renderFromWei(value: any, decimalsToShow = 5) {
   let renderWei = '0';
   // avoid undefined
   if (value) {
@@ -425,7 +433,7 @@ export function renderFromWei(value, decimalsToShow = 5) {
  * @param {object|string} value - Value to check
  * @returns {boolean} - True if the value is a BN instance
  */
-export function isBN(value) {
+export function isBN(value: any) {
   return BN4.isBN(value);
 }
 
@@ -436,7 +444,7 @@ export function isBN(value) {
  * @param {number | string} value - String to check
  * @returns {boolean} - True if the string is a valid decimal
  */
-export function isDecimal(value) {
+export function isDecimal(value: any) {
   return (
     Number.isFinite(parseFloat(value)) &&
     !Number.isNaN(parseFloat(value)) &&
@@ -451,7 +459,7 @@ export function isDecimal(value) {
  * @param {string} value - Some numeric value represented as a string
  * @returns {Object} - BN instance
  */
-export function toBN(value) {
+export function toBN(value: any) {
   return new BN4(value);
 }
 
@@ -462,7 +470,7 @@ export function toBN(value) {
  * @param {*} str - Number string
  * @returns {boolean} - True if the string  is a valid number
  */
-export function isNumber(str) {
+export function isNumber(str: any) {
   return regex.number.test(str);
 }
 
@@ -473,7 +481,7 @@ export function isNumber(str) {
  * @param {number | string | null | undefined} value - Value to check
  * @returns {boolean} - True if the value is a valid number
  */
-export function isNumberValue(value) {
+export function isNumberValue(value: any) {
   if (value === null || value === undefined) {
     return false;
   }
@@ -488,7 +496,7 @@ export function isNumberValue(value) {
 /**
  * @deprecated Use dotAndCommaDecimalFormatter instead from utils/number/bigint
  */
-export const dotAndCommaDecimalFormatter = (value) => {
+export const dotAndCommaDecimalFormatter = (value: any) => {
   const valueStr = String(value);
 
   const formattedValue = valueStr.replace(',', '.');
@@ -506,7 +514,7 @@ export const dotAndCommaDecimalFormatter = (value) => {
  * @see https://262.ecma-international.org/5.1/#sec-9.8.1
  */
 
-export const isNumberScientificNotationWhenString = (value) => {
+export const isNumberScientificNotationWhenString = (value: any) => {
   if (typeof value !== 'number') {
     return false;
   }
@@ -522,7 +530,7 @@ export const isNumberScientificNotationWhenString = (value) => {
  * @param {string} unit - Unit to convert from, ether by default
  * @returns {BN4} - BN instance containing the new number
  */
-export function toWei(value, unit = 'ether') {
+export function toWei(value: any, unit = 'ether') {
   // check the posibilty to convert to BN
   // directly on the swaps screen
   if (isNumberScientificNotationWhenString(value)) {
@@ -539,8 +547,8 @@ export function toWei(value, unit = 'ether') {
  * @param {string} unit - Unit to convert from, ether by default
  * @returns {Object} - BN instance containing the new number
  */
-export function toGwei(value, unit = 'ether') {
-  return fromWei(value, unit) * 1000000000;
+export function toGwei(value: any, unit = 'ether') {
+  return Number(fromWei(value, unit)) * 1000000000;
 }
 
 /**
@@ -551,8 +559,9 @@ export function toGwei(value, unit = 'ether') {
  * @param {string} unit - Unit to convert from, ether by default
  * @returns {string} - String instance containing the renderable number
  */
-export function renderToGwei(value, unit = 'ether') {
-  const gwei = fromWei(value, unit) * 1000000000;
+export function renderToGwei(value: any, unit = 'ether') {
+  const gwei = Number(fromWei(value, unit)) * 1000000000;
+  // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
   let gweiFixed = parseFloat(Math.round(gwei));
   gweiFixed = isNaN(gweiFixed) ? 0 : gweiFixed;
   return gweiFixed;
@@ -569,11 +578,11 @@ export function renderToGwei(value, unit = 'ether') {
  * @returns {string} - Currency-formatted string
  */
 export function weiToFiat(
-  wei,
-  conversionRate = null,
-  currencyCode,
-  decimalsToShow = 5,
-) {
+  wei: any,
+  conversionRate: number | null | undefined = null,
+  currencyCode: string,
+  decimalsToShow: number | undefined = 5,
+): string | undefined {
   if (!conversionRate) return undefined;
   if (!wei || !isBN(wei) || !conversionRate) {
     return addCurrencySymbol(0, currencyCode);
@@ -592,8 +601,8 @@ export function weiToFiat(
  * @returns {string} - Currency-formatted string
  */
 export function addCurrencySymbol(
-  amount,
-  currencyCode,
+  amount: any,
+  currencyCode: any,
   extendDecimals = false,
   useSubscriptNotation = false,
 ) {
@@ -607,7 +616,9 @@ export function addCurrencySymbol(
 
     if (formatted) {
       const symbol =
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         currencySymbols[currencyCode] ||
+        // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         currencySymbols[currencyCode?.toLowerCase()] ||
         '';
 
@@ -652,13 +663,17 @@ export function addCurrencySymbol(
     ? amountString.slice(1) // Remove the first character if it's a '-'
     : amountString;
 
+  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   if (currencySymbols[currencyCode]) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     return `${prefix}${currencySymbols[currencyCode]}${absAmountStr}`;
   }
 
   const lowercaseCurrencyCode = currencyCode?.toLowerCase();
 
+  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   if (currencySymbols[lowercaseCurrencyCode]) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     return `${prefix}${currencySymbols[lowercaseCurrencyCode]}${absAmountStr}`;
   }
 
@@ -674,9 +689,14 @@ export function addCurrencySymbol(
  * @param {Number} decimalsToShow - Decimals to 5
  * @returns {Number} - The converted balance
  */
-export function weiToFiatNumber(wei, conversionRate, decimalsToShow = 5) {
+export function weiToFiatNumber(
+  wei: any,
+  conversionRate: any,
+  decimalsToShow = 5,
+) {
   const base = Math.pow(10, decimalsToShow);
   const eth = fromWei(wei).toString();
+  // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
   let value = parseFloat(Math.floor(eth * conversionRate * base) / base);
   value = isNaN(value) ? 0.0 : value;
   return value;
@@ -689,7 +709,7 @@ export function weiToFiatNumber(wei, conversionRate, decimalsToShow = 5) {
  * @param {string} wei - Amount in decimal notation
  * @returns {string} - Number string with less or equal 18 decimals
  */
-export function handleWeiNumber(wei) {
+export function handleWeiNumber(wei: any) {
   const comps = wei.split('.');
   let fraction = comps[1];
   if (fraction && fraction.length > 18) fraction = fraction.substring(0, 18);
@@ -705,7 +725,7 @@ export function handleWeiNumber(wei) {
  * @param {number} conversionRate - ETH to current currency conversion rate
  * @returns {Object} - The converted balance as BN instance
  */
-export function fiatNumberToWei(fiat, conversionRate) {
+export function fiatNumberToWei(fiat: any, conversionRate: any) {
   const floatFiatConverted = parseFloat(fiat) / conversionRate;
   if (
     !floatFiatConverted ||
@@ -717,6 +737,7 @@ export function fiatNumberToWei(fiat, conversionRate) {
   const base = Math.pow(10, 18);
   let weiNumber = Math.trunc(base * floatFiatConverted);
   // avoid decimals
+  // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'number'.
   weiNumber = weiNumber.toLocaleString('fullwide', { useGrouping: false });
   const weiBN = safeNumberToBN(weiNumber);
   return weiBN;
@@ -729,7 +750,7 @@ export function fiatNumberToWei(fiat, conversionRate) {
  * @param {number|string} value -  number
  * @returns {Object} - The converted value as BN instance
  */
-export function safeNumberToBN(value) {
+export function safeNumberToBN(value: any) {
   try {
     const safeValue = fastSplit(value?.toString()) || '0';
     return numberToBN(safeValue);
@@ -747,7 +768,7 @@ export function safeNumberToBN(value) {
  * @returns {string} - the selected splitted element
  */
 
-export function fastSplit(value, divider = '.') {
+export function fastSplit(value: any, divider = '.') {
   const [from, to] = [value.indexOf(divider), 0];
   return value.substring(from, to) || value;
 }
@@ -763,10 +784,10 @@ export function fastSplit(value, divider = '.') {
  * @returns {string} - Currency-formatted string
  */
 export function balanceToFiat(
-  balance,
-  conversionRate,
-  exchangeRate,
-  currencyCode,
+  balance: any,
+  conversionRate: any,
+  exchangeRate: any,
+  currencyCode: any,
 ) {
   if (
     balance === undefined ||
@@ -792,13 +813,14 @@ export function balanceToFiat(
  * @returns {Number} - The converted balance
  */
 export function balanceToFiatNumber(
-  balance,
-  conversionRate,
-  exchangeRate,
+  balance: any,
+  conversionRate: any,
+  exchangeRate: any,
   decimalsToShow = 5,
 ) {
   const base = Math.pow(10, decimalsToShow);
   let fiatFixed = parseFloat(
+    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
     Math.floor(balance * conversionRate * exchangeRate * base) / base,
   );
   fiatFixed = isNaN(fiatFixed) ? 0.0 : fiatFixed;
@@ -808,8 +830,10 @@ export function balanceToFiatNumber(
 /**
  * @deprecated Use getCurrencySymbol instead from utils/number/bigint
  */
-export function getCurrencySymbol(currencyCode) {
+export function getCurrencySymbol(currencyCode: any) {
+  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   if (currencySymbols[currencyCode]) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     return `${currencySymbols[currencyCode]}`;
   }
   return currencyCode;
@@ -824,14 +848,17 @@ export function getCurrencySymbol(currencyCode) {
  * @param {number} decimalsToShow - Decimals to 5
  * @returns {string} - The converted balance
  */
-export function renderFiat(value, currencyCode, decimalsToShow = 5) {
+export function renderFiat(value: any, currencyCode: any, decimalsToShow = 5) {
   const base = Math.pow(10, decimalsToShow);
+  // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
   let fiatFixed = parseFloat(Math.round(value * base) / base);
   fiatFixed = isNaN(fiatFixed) ? 0.0 : fiatFixed;
+  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   if (currencySymbols[currencyCode]) {
     const isNegative = fiatFixed < 0;
     const absValue = Math.abs(fiatFixed);
     const sign = isNegative ? '-' : '';
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     return `${sign}${currencySymbols[currencyCode]}${absValue}`;
   }
   return `${fiatFixed} ${currencyCode.toUpperCase()}`;
@@ -844,10 +871,10 @@ export function renderFiat(value, currencyCode, decimalsToShow = 5) {
  * @param {object} value - Object containing wei value in BN format
  * @returns {string} - Corresponding wei value
  */
-export function renderWei(value) {
+export function renderWei(value: any) {
   if (!value) return '0';
   const wei = fromWei(value);
-  const renderWei = wei * Math.pow(10, 18);
+  const renderWei = Number(wei) * Math.pow(10, 18);
   return renderWei.toString();
 }
 /**
@@ -857,7 +884,7 @@ export function renderWei(value) {
  * @param {string} number - String containing a number
  * @returns {string} - String number with none or at most 5 decimal places
  */
-export function renderNumber(number) {
+export function renderNumber(number: any) {
   const index = number.indexOf('.');
   if (index === 0) return number;
   return number.substring(0, index + 6);
@@ -872,7 +899,7 @@ export function renderNumber(number) {
  * @returns {boolean} True if the value is a correctly formatted hex string,
  * false otherwise.
  */
-export function isPrefixedFormattedHexString(value) {
+export function isPrefixedFormattedHexString(value: any) {
   if (typeof value !== 'string') {
     return false;
   }
@@ -891,12 +918,14 @@ const converter = ({
   conversionRate,
   invertConversionRate,
   roundDown,
-}) => {
+}: any) => {
   let convertedValue = fromNumericBase
-    ? toBigNumber[fromNumericBase](value)
+    ? // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+      toBigNumber[fromNumericBase](value)
     : value;
 
   if (fromDenomination) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     convertedValue = toNormalizedDenomination[fromDenomination](convertedValue);
   }
 
@@ -914,6 +943,7 @@ const converter = ({
   }
 
   if (toDenomination) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     convertedValue = toSpecifiedDenomination[toDenomination](convertedValue);
   }
 
@@ -932,6 +962,7 @@ const converter = ({
   }
 
   if (toNumericBase) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     convertedValue = baseChange[toNumericBase](convertedValue);
   }
   return convertedValue;
@@ -941,7 +972,7 @@ const converter = ({
  * @deprecated Use conversionUtil instead from utils/number/bigint
  */
 export const conversionUtil = (
-  value,
+  value: any,
   {
     fromCurrency = null,
     toCurrency = fromCurrency,
@@ -952,7 +983,7 @@ export const conversionUtil = (
     numberOfDecimals,
     conversionRate,
     invertConversionRate,
-  },
+  }: any,
 ) =>
   converter({
     fromCurrency,
@@ -970,7 +1001,9 @@ export const conversionUtil = (
 /**
  * @deprecated Use toHexadecimal instead from utils/number/bigint
  */
-export const toHexadecimal = (decimal) => {
+// TODO: Replace "any" after callers stop relying on falsy-value passthrough.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const toHexadecimal = (decimal?: any): any => {
   if (!decimal) return decimal;
   if (decimal !== typeof 'string') {
     decimal = String(decimal);
@@ -985,7 +1018,7 @@ export const toHexadecimal = (decimal) => {
 export const calculateEthFeeForMultiLayer = ({
   multiLayerL1FeeTotal,
   ethFee = 0,
-}) => {
+}: any) => {
   if (!multiLayerL1FeeTotal) {
     return ethFee;
   }
@@ -1006,7 +1039,7 @@ export const calculateEthFeeForMultiLayer = ({
  * @param {number|string|object} value - Value to check
  * @returns {boolean} - true if value is zero
  */
-export const isZeroValue = (value) => {
+export const isZeroValue = (value: any) => {
   if (value === null || value === undefined) {
     return false;
   }
@@ -1016,7 +1049,7 @@ export const isZeroValue = (value) => {
 /**
  * @deprecated Use formatValueToMatchTokenDecimals instead from utils/number/bigint
  */
-export const formatValueToMatchTokenDecimals = (value, decimal) => {
+export const formatValueToMatchTokenDecimals = (value: any, decimal: any) => {
   if (value === null || value === undefined) {
     return value;
   }
@@ -1033,7 +1066,7 @@ export const formatValueToMatchTokenDecimals = (value, decimal) => {
 /**
  * @deprecated Use safeBNToHex instead from utils/number/bigint
  */
-export const safeBNToHex = (value) => {
+export const safeBNToHex = (value: any) => {
   if (value === null || value === undefined) {
     return value;
   }
@@ -1053,7 +1086,8 @@ export const safeBNToHex = (value) => {
  * @param options.includeK - Whether to include K suffix for thousands (default: false for backward compatibility).
  * @returns A localized string of the formatted number + unit.
  */
-export const localizeLargeNumber = (i18n, number, options = {}) => {
+export const localizeLargeNumber = (i18n: any, number: any, options = {}) => {
+  // @ts-expect-error TS(2339): Property 'decimals' does not exist on type '{}'.
   const { decimals = 2, includeK = false } = options;
   const oneTrillion = 1000000000000;
   const oneBillion = 1000000000;
@@ -1083,7 +1117,7 @@ export const localizeLargeNumber = (i18n, number, options = {}) => {
 /**
  * @deprecated Use convertDecimalToPercentage instead from utils/number/bigint
  */
-export const convertDecimalToPercentage = (decimal) => {
+export const convertDecimalToPercentage = (decimal: any) => {
   if (typeof decimal !== 'number' || isNaN(decimal)) {
     throw new Error('Input must be a valid number');
   }

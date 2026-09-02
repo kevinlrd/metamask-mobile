@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- TODO: Type legacy Ganache server and provider values. */
 import { getGanachePort } from '../../../tests/framework/fixtures/FixtureUtils';
 import ganache from 'ganache';
 import { ServerStatus } from '../../../tests/framework/types';
@@ -14,6 +15,10 @@ const defaultOptions = {
 };
 
 export default class Ganache {
+  _server: any;
+  _serverPort: any;
+  _serverStatus: any;
+  _startOptions: any;
   constructor() {
     this._startOptions = {};
     this._serverPort = undefined;
@@ -24,7 +29,7 @@ export default class Ganache {
    * Set start options that will be used when start() is called
    * @param {Object} opts - Ganache node options
    */
-  setStartOptions(opts) {
+  setStartOptions(opts: any) {
     this._startOptions = opts;
   }
 
@@ -32,7 +37,7 @@ export default class Ganache {
    * Set the port that Ganache should listen on
    * @param {number} port - Port number
    */
-  setServerPort(port) {
+  setServerPort(port: any) {
     this._serverPort = port;
   }
 

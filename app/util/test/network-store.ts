@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- TODO: Type legacy network store fixtures. */
 import axios from 'axios';
 import { Platform } from 'react-native';
 import { getFixturesServerPortInApp } from './utils';
@@ -11,7 +12,7 @@ axios.defaults.headers.common['Access-Control-Allow-Methods'] =
 axios.defaults.headers.common['Access-Control-Allow-Headers'] =
   'Origin, X-Requested-With, Content-Type, Accept';
 
-const fetchWithTimeout = (url) =>
+const fetchWithTimeout = (url: any) =>
   new Promise((resolve, reject) => {
     axios
       .get(url)
@@ -23,6 +24,9 @@ const fetchWithTimeout = (url) =>
   });
 
 class ReadOnlyNetworkStore {
+  _asyncState: any;
+  _initialized: any;
+  _state: any;
   constructor() {
     this._initialized = false;
     this._state = undefined;
@@ -35,7 +39,7 @@ class ReadOnlyNetworkStore {
     return this._state;
   }
 
-  async setState(state) {
+  async setState(state: any) {
     if (!state) {
       throw new Error('MetaMask - updated state is missing');
     }
@@ -44,18 +48,18 @@ class ReadOnlyNetworkStore {
   }
 
   // Async Storage
-  async getString(key) {
+  async getString(key: any) {
     await this._initIfRequired();
     const value = this._asyncState[key];
     return value !== undefined ? value : null;
   }
 
-  async set(key, value) {
+  async set(key: any, value: any) {
     await this._initIfRequired();
     this._asyncState[key] = value;
   }
 
-  async delete(key) {
+  async delete(key: any) {
     await this._initIfRequired();
     delete this._asyncState[key];
   }
@@ -70,9 +74,9 @@ class ReadOnlyNetworkStore {
     return Object.keys(this._asyncState || {});
   }
 
-  async multiGet(keys) {
+  async multiGet(keys: any) {
     await this._initIfRequired();
-    return keys.map((key) => [key, this._asyncState?.[key] ?? null]);
+    return keys.map((key: any) => [key, this._asyncState?.[key] ?? null]);
   }
 
   async _initIfRequired() {
@@ -104,9 +108,9 @@ class ReadOnlyNetworkStore {
       for (const url of urls) {
         try {
           const response = await fetchWithTimeout(url);
-          if (response.status === 200) {
-            this._state = response.data?.state;
-            this._asyncState = response.data?.asyncState;
+          if ((response as any).status === 200) {
+            this._state = (response as any).data?.state;
+            this._asyncState = (response as any).data?.asyncState;
             // eslint-disable-next-line no-console
             console.debug(`Successfully loaded fixture state from ${url}`);
             return;

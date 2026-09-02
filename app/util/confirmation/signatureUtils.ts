@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- TODO: Replace legacy signature payloads with controller request types. */
 import Engine from '../../core/Engine';
 import { MetaMetricsEvents } from '../../core/Analytics/MetaMetrics.events';
 import { getAddressAccountType } from '../address';
@@ -22,9 +23,9 @@ export const typedSign = {
 };
 
 export const getAnalyticsParams = (
-  messageParams,
-  signType,
-  securityAlertResponse,
+  messageParams: any,
+  signType: any,
+  securityAlertResponse?: any,
 ) => {
   if (!messageParams || typeof messageParams !== 'object') {
     throw new Error('Invalid messageParams provided');
@@ -56,13 +57,17 @@ export const getAnalyticsParams = (
       Object.assign(analyticsParams, blockaidParams);
     }
   } catch (error) {
+    // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
     Logger.error(error, 'Error processing analytics parameters:');
   }
 
   return analyticsParams;
 };
 
-export const walletConnectNotificationTitle = (confirmation, isError) => {
+export const walletConnectNotificationTitle = (
+  confirmation: any,
+  isError: any,
+) => {
   if (isError) return strings('notifications.wc_signed_failed_title');
   return confirmation
     ? strings('notifications.wc_signed_title')
@@ -78,23 +83,22 @@ export const showWalletConnectNotification = (
     /**
      * FIXME: need to rewrite the way BackgroundBridge sets the origin.
      */
-    const origin = messageParams.origin.toLowerCase().replaceAll(':', '');
+    const origin = (messageParams as any).origin
+      .toLowerCase()
+      .split(':')
+      .join('');
     const isWCOrigin = origin.startsWith(
-      WALLET_CONNECT_ORIGIN.replaceAll(':', '').toLowerCase(),
+      WALLET_CONNECT_ORIGIN.split(':').join('').toLowerCase(),
     );
-
     // Check for both V1 and V2 SDK origins
-    const v1OriginPrefix = AppConstants.MM_SDK.SDK_REMOTE_ORIGIN.replaceAll(
-      ':',
-      '',
-    ).toLowerCase();
-    const v2OriginPrefix = AppConstants.MM_SDK.SDK_CONNECT_V2_ORIGIN.replaceAll(
-      ':',
-      '',
-    ).toLowerCase();
+    const v1OriginPrefix = AppConstants.MM_SDK.SDK_REMOTE_ORIGIN.split(':')
+      .join('')
+      .toLowerCase();
+    const v2OriginPrefix = AppConstants.MM_SDK.SDK_CONNECT_V2_ORIGIN.split(':')
+      .join('')
+      .toLowerCase();
     const isSDKOrigin =
       origin.startsWith(v1OriginPrefix) || origin.startsWith(v2OriginPrefix);
-
     if (isWCOrigin || isSDKOrigin) {
       NotificationManager.showSimpleNotification({
         status: `simple_notification${!confirmation ? '_rejected' : ''}`,
@@ -107,11 +111,11 @@ export const showWalletConnectNotification = (
 };
 
 export const handleSignatureAction = async (
-  onAction,
-  messageParams,
-  signType,
-  securityAlertResponse,
-  confirmation,
+  onAction: any,
+  messageParams: any,
+  signType: any,
+  securityAlertResponse: any,
+  confirmation?: any,
 ) => {
   await onAction();
   showWalletConnectNotification(messageParams, confirmation);
@@ -128,21 +132,27 @@ export const handleSignatureAction = async (
   );
 };
 
-export const addSignatureErrorListener = (metamaskId, onSignatureError) => {
+export const addSignatureErrorListener = (
+  metamaskId: any,
+  onSignatureError: any,
+) => {
   Engine.context.SignatureController.hub.on(
     `${metamaskId}:signError`,
     onSignatureError,
   );
 };
 
-export const removeSignatureErrorListener = (metamaskId, onSignatureError) => {
+export const removeSignatureErrorListener = (
+  metamaskId: any,
+  onSignatureError: any,
+) => {
   Engine.context.SignatureController.hub.removeListener(
     `${metamaskId}:signError`,
     onSignatureError,
   );
 };
 
-export const shouldTruncateMessage = (e) => {
+export const shouldTruncateMessage = (e: any) => {
   if (
     (Device.isIos() && e.nativeEvent.layout.height > 70) ||
     (Device.isAndroid() && e.nativeEvent.layout.height > 100)

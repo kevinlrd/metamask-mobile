@@ -2023,7 +2023,6 @@ describe('Transactions utils :: isLegacyTransaction', () => {
   });
 
   it('returns false for undefined transactionMeta', () => {
-    // @ts-expect-error Testing undefined input
     expect(isLegacyTransaction(undefined)).toBe(false);
   });
 
@@ -2243,7 +2242,6 @@ describe('Transactions utils :: isNFTTokenStandard', () => {
   });
 
   it('returns false for undefined token standard', () => {
-    // @ts-expect-error Testing undefined input
     const result = isNFTTokenStandard(undefined);
     expect(result).toBe(false);
   });

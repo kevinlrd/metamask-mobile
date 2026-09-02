@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- TODO: Replace legacy currency conversion inputs with discriminated types. */
 /* Currency Conversion Utility
  * This utility function can be used for converting currency related values within metamask.
  * The caller should be able to pass it a value, along with information about the value's
@@ -33,31 +34,31 @@ const BIG_NUMBER_ETH_MULTIPLIER = new BigNumber('1');
 
 // Setter Maps
 const toBigNumber = {
-  hex: (n) => new BigNumber(stripHexPrefix(n), 16),
-  dec: (n) => new BigNumber(String(n), 10),
-  BN: (n) => new BigNumber(n.toString(16), 16),
+  hex: (n: any) => new BigNumber(stripHexPrefix(n), 16),
+  dec: (n: any) => new BigNumber(String(n), 10),
+  BN: (n: any) => new BigNumber(n.toString(16), 16),
 };
 const toNormalizedDenomination = {
-  WEI: (bigNumber) => bigNumber.div(BIG_NUMBER_WEI_MULTIPLIER),
-  GWEI: (bigNumber) => bigNumber.div(BIG_NUMBER_GWEI_MULTIPLIER),
-  ETH: (bigNumber) => bigNumber.div(BIG_NUMBER_ETH_MULTIPLIER),
+  WEI: (bigNumber: any) => bigNumber.div(BIG_NUMBER_WEI_MULTIPLIER),
+  GWEI: (bigNumber: any) => bigNumber.div(BIG_NUMBER_GWEI_MULTIPLIER),
+  ETH: (bigNumber: any) => bigNumber.div(BIG_NUMBER_ETH_MULTIPLIER),
 };
 const toSpecifiedDenomination = {
-  WEI: (bigNumber) =>
+  WEI: (bigNumber: any) =>
     bigNumber.times(BIG_NUMBER_WEI_MULTIPLIER).decimalPlaces(0),
-  GWEI: (bigNumber) =>
+  GWEI: (bigNumber: any) =>
     bigNumber.times(BIG_NUMBER_GWEI_MULTIPLIER).decimalPlaces(9),
-  ETH: (bigNumber) =>
+  ETH: (bigNumber: any) =>
     bigNumber.times(BIG_NUMBER_ETH_MULTIPLIER).decimalPlaces(9),
 };
 const baseChange = {
-  hex: (n) => n.toString(16),
-  dec: (n) => new BigNumber(n).toString(10),
-  BN: (n) => new BN(n.toString(16)),
+  hex: (n: any) => n.toString(16),
+  dec: (n: any) => new BigNumber(n).toString(10),
+  BN: (n: any) => new BN(n.toString(16)),
 };
 
 // Utility function for checking base types
-const isValidBase = (base) => Number.isInteger(base) && base > 1;
+const isValidBase = (base: any) => Number.isInteger(base) && base > 1;
 
 /**
  * Defines the base type of numeric value
@@ -96,12 +97,14 @@ const converter = ({
   conversionRate,
   invertConversionRate,
   roundDown,
-}) => {
+}: any) => {
   let convertedValue = fromNumericBase
-    ? toBigNumber[fromNumericBase](value)
+    ? // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+      toBigNumber[fromNumericBase](value)
     : value;
 
   if (fromDenomination) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     convertedValue = toNormalizedDenomination[fromDenomination](convertedValue);
   }
 
@@ -119,6 +122,7 @@ const converter = ({
   }
 
   if (toDenomination) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     convertedValue = toSpecifiedDenomination[toDenomination](convertedValue);
   }
 
@@ -137,13 +141,14 @@ const converter = ({
   }
 
   if (toNumericBase) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     convertedValue = baseChange[toNumericBase](convertedValue);
   }
   return convertedValue;
 };
 
 const conversionUtil = (
-  value,
+  value: any,
   {
     fromCurrency = null,
     toCurrency = fromCurrency,
@@ -154,7 +159,7 @@ const conversionUtil = (
     numberOfDecimals,
     conversionRate,
     invertConversionRate,
-  },
+  }: any,
 ) => {
   if (fromCurrency !== toCurrency && !conversionRate) {
     return 0;
@@ -173,7 +178,7 @@ const conversionUtil = (
   });
 };
 
-const getBigNumber = (value, base) => {
+const getBigNumber = (value: any, base: any) => {
   if (!isValidBase(base)) {
     throw new Error('Must specify valid base');
   }
@@ -187,7 +192,8 @@ const getBigNumber = (value, base) => {
   return new BigNumber(String(value), base);
 };
 
-const addCurrencies = (a, b, options = {}) => {
+const addCurrencies = (a: any, b: any, options = {}) => {
+  // @ts-expect-error TS(2339): Property 'aBase' does not exist on type '{}'.
   const { aBase, bBase, ...conversionOptions } = options;
 
   if (!isValidBase(aBase) || !isValidBase(bBase)) {
@@ -201,7 +207,8 @@ const addCurrencies = (a, b, options = {}) => {
   });
 };
 
-const subtractCurrencies = (a, b, options = {}) => {
+const subtractCurrencies = (a: any, b: any, options = {}) => {
+  // @ts-expect-error TS(2339): Property 'aBase' does not exist on type '{}'.
   const { aBase, bBase, ...conversionOptions } = options;
 
   if (!isValidBase(aBase) || !isValidBase(bBase)) {
@@ -216,7 +223,8 @@ const subtractCurrencies = (a, b, options = {}) => {
   });
 };
 
-const multiplyCurrencies = (a, b, options = {}) => {
+const multiplyCurrencies = (a: any, b: any, options = {}) => {
+  // @ts-expect-error TS(2339): Property 'multiplicandBase' does not exist on type... Remove this comment to see the full error message
   const { multiplicandBase, multiplierBase, ...conversionOptions } = options;
 
   if (!isValidBase(multiplicandBase) || !isValidBase(multiplierBase)) {
@@ -268,7 +276,7 @@ const conversionLTE = ({ ...firstProps }, { ...secondProps }) => {
   return firstValue.lessThanOrEqualTo(secondValue);
 };
 
-const toNegative = (n, options = {}) => multiplyCurrencies(n, -1, options);
+const toNegative = (n: any, options = {}) => multiplyCurrencies(n, -1, options);
 
 export {
   conversionUtil,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- TODO: Type legacy Ganache seed configuration and receipts. */
 import { Web3Provider } from '@ethersproject/providers';
 import { ContractFactory } from '@ethersproject/contracts';
 import { SMART_CONTRACTS, contractConfiguration } from './smart-contracts';
@@ -7,7 +8,9 @@ import ContractAddressRegistry from './contract-address-registry';
  * Ganache seeder is used to seed initial smart contract or set initial blockchain state.
  */
 class GanacheSeeder {
-  constructor(ganacheProvider) {
+  ganacheProvider: any;
+  smartContractRegistry: any;
+  constructor(ganacheProvider: any) {
     this.smartContractRegistry = new ContractAddressRegistry();
     this.ganacheProvider = ganacheProvider;
   }
@@ -18,7 +21,7 @@ class GanacheSeeder {
    * @param contractName
    */
 
-  async deploySmartContract(contractName) {
+  async deploySmartContract(contractName: any) {
     const ethersProvider = new Web3Provider(this.ganacheProvider, 'any');
     const signer = ethersProvider.getSigner();
     const fromAddress = await signer.getAddress();
@@ -32,10 +35,10 @@ class GanacheSeeder {
 
     if (contractName === SMART_CONTRACTS.HST) {
       contract = await contractFactory.deploy(
-        contractConfiguration[SMART_CONTRACTS.HST].initialAmount,
-        contractConfiguration[SMART_CONTRACTS.HST].tokenName,
-        contractConfiguration[SMART_CONTRACTS.HST].decimalUnits,
-        contractConfiguration[SMART_CONTRACTS.HST].tokenSymbol,
+        (contractConfiguration[SMART_CONTRACTS.HST] as any).initialAmount,
+        (contractConfiguration[SMART_CONTRACTS.HST] as any).tokenName,
+        (contractConfiguration[SMART_CONTRACTS.HST] as any).decimalUnits,
+        (contractConfiguration[SMART_CONTRACTS.HST] as any).tokenSymbol,
       );
     } else {
       contract = await contractFactory.deploy();
@@ -69,7 +72,7 @@ class GanacheSeeder {
    * @param contractName
    * @param contractAddress
    */
-  storeSmartContractAddress(contractName, contractAddress) {
+  storeSmartContractAddress(contractName: any, contractAddress: any) {
     this.smartContractRegistry.storeNewContractAddress(
       contractName,
       contractAddress,

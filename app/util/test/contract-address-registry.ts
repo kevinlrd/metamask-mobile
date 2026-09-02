@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- TODO: Type legacy contract registry fixtures. */
 /*
  * Use this class to store pre-deployed smart contract addresses of the contracts deployed to
  * a local blockchain instance.
@@ -11,7 +12,8 @@ class ContractAddressRegistry {
    * @param contractName
    * @param contractAddress
    */
-  storeNewContractAddress(contractName, contractAddress) {
+  storeNewContractAddress(contractName: any, contractAddress: any) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     this.#addresses[contractName] = contractAddress;
   }
 
@@ -20,7 +22,8 @@ class ContractAddressRegistry {
    *
    * @param contractName
    */
-  getContractAddress(contractName) {
+  getContractAddress(contractName: any) {
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     return this.#addresses[contractName];
   }
 }

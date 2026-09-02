@@ -58,7 +58,6 @@ const NetworkAndTokenImage = ({ token }: { token: TokenI }) => {
         badgeElement={
           <Badge
             variant={BadgeVariant.Network}
-            // @ts-expect-error The utils/network file is still JS and this function expects a networkType that should be optional
             imageSource={getNetworkImageSource({ chainId: token?.chainId })}
           />
         }

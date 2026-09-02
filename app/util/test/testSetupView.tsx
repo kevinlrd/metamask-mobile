@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-require-imports, no-restricted-syntax -- TODO: Replace legacy component test mocks with typed module factories. */
 /**
  * COMPONENT-VIEW TEST SETUP
  * Isolated environment for View Tests.
@@ -13,7 +14,7 @@ const { NativeModules } = require('react-native');
 const nodeCrypto = require('crypto');
 
 // Secure random helper to avoid duplication
-const getRandomValuesCompat = (arr) =>
+const getRandomValuesCompat = (arr: any) =>
   nodeCrypto?.webcrypto?.getRandomValues
     ? nodeCrypto.webcrypto.getRandomValues(arr)
     : (nodeCrypto.randomFillSync(arr), arr);
@@ -25,13 +26,13 @@ jest.mock('react-native-mmkv', () => {
   const createInMemoryMMKV = () => {
     const store = new Map();
     return {
-      getString: jest.fn((key) => store.get(key)),
-      set: jest.fn((key, value) => store.set(key, value)),
-      getBoolean: jest.fn((key) => store.get(key)),
-      getNumber: jest.fn((key) => store.get(key)),
-      delete: jest.fn((key) => store.delete(key)),
-      remove: jest.fn((key) => store.delete(key)),
-      contains: jest.fn((key) => store.has(key)),
+      getString: jest.fn((key: any) => store.get(key)),
+      set: jest.fn((key: any, value: any) => store.set(key, value)),
+      getBoolean: jest.fn((key: any) => store.get(key)),
+      getNumber: jest.fn((key: any) => store.get(key)),
+      delete: jest.fn((key: any) => store.delete(key)),
+      remove: jest.fn((key: any) => store.delete(key)),
+      contains: jest.fn((key: any) => store.has(key)),
       clearAll: jest.fn(() => store.clear()),
       getAllKeys: jest.fn(() => [...store.keys()]),
       recrypt: jest.fn(),
@@ -55,7 +56,7 @@ jest.mock('react-native-mmkv', () => {
 // ------------------------------------------------
 
 // Mock unstable_batchedUpdates more reliably
-const mockBatchedUpdates = jest.fn((fn) => {
+const mockBatchedUpdates = jest.fn((fn: any) => {
   if (typeof fn === 'function') {
     return fn();
   }
@@ -117,12 +118,13 @@ jest.mock('expo/fetch', () => ({
 // Reanimated setup is usually required for navigation/animations
 try {
   require('react-native-reanimated').setUpTests();
+  // @ts-expect-error TS(7017): Element implicitly has an 'any' type because type ... Remove this comment to see the full error message
   global.__reanimatedWorkletInit = jest.fn();
 } catch (e) {
   // eslint-disable-next-line no-console
   console.warn(
     '[testSetupView] react-native-reanimated test setup skipped:',
-    e?.message ?? e,
+    (e as any)?.message ?? e,
   );
 }
 
@@ -163,27 +165,34 @@ jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter', () => {
 jest.mock('react-native-quick-crypto', () => {
   // eslint-disable-next-line import-x/no-nodejs-modules
   const mockNodeCrypto = require('crypto');
-  const getRandomValuesCompatLocal = (arr) =>
+  const getRandomValuesCompatLocal = (arr: any) =>
     mockNodeCrypto?.webcrypto?.getRandomValues
       ? mockNodeCrypto.webcrypto.getRandomValues(arr)
       : (mockNodeCrypto.randomFillSync(arr), arr);
 
   return {
-    getRandomValues: jest.fn((array) => getRandomValuesCompatLocal(array)),
+    getRandomValues: jest.fn((array: any) => getRandomValuesCompatLocal(array)),
     subtle: {
-      importKey: jest.fn((format, keyData, algorithm, extractable, keyUsages) =>
-        Promise.resolve({
-          format,
-          keyData,
-          algorithm,
-          extractable,
-          keyUsages,
-        }),
+      importKey: jest.fn(
+        (
+          format: any,
+          keyData: any,
+          algorithm: any,
+          extractable: any,
+          keyUsages: any,
+        ) =>
+          Promise.resolve({
+            format,
+            keyData,
+            algorithm,
+            extractable,
+            keyUsages,
+          }),
       ),
-      deriveBits: jest.fn((algorithm, baseKey, length) =>
+      deriveBits: jest.fn((algorithm: any, baseKey: any, length: any) =>
         Promise.resolve(getRandomValuesCompatLocal(new Uint8Array(length))),
       ),
-      exportKey: jest.fn((format, key) =>
+      exportKey: jest.fn((format: any, key: any) =>
         Promise.resolve(new Uint8Array([1, 2, 3, 4])),
       ),
       encrypt: jest.fn(() =>
@@ -221,6 +230,7 @@ jest.mock('react-native-quick-crypto', () => {
 });
 
 // Mock global crypto
+// @ts-expect-error TS(2739): Type '{ getRandomValues: <T extends ArrayBufferVie... Remove this comment to see the full error message
 global.crypto = {
   getRandomValues: (arr) => getRandomValuesCompat(arr),
 };
@@ -290,9 +300,11 @@ jest.mock('react-native-blob-util', () => ({
 }));
 
 // Mock Segment Analytics
+// @ts-expect-error TS(7017): Element implicitly has an 'any' type because type ... Remove this comment to see the full error message
 global.segmentMockClient = null;
 
 const initializeMockClient = () => {
+  // @ts-expect-error TS(7017): Element implicitly has an 'any' type because type ... Remove this comment to see the full error message
   global.segmentMockClient = {
     screen: jest.fn(),
     track: jest.fn(),
@@ -303,6 +315,7 @@ const initializeMockClient = () => {
     reset: jest.fn(),
     add: jest.fn(),
   };
+  // @ts-expect-error TS(7017): Element implicitly has an 'any' type because type ... Remove this comment to see the full error message
   return global.segmentMockClient;
 };
 
@@ -311,17 +324,17 @@ jest.mock('@segment/analytics-react-native', () => {
     type = 'utility';
     analytics = undefined;
 
-    configure(analytics) {
+    configure(analytics: any) {
       this.analytics = analytics;
     }
   }
 
   // Replace empty classes with simple constructor functions (Sonar S2094)
-  function CountFlushPolicy(count) {
+  function CountFlushPolicy(count: any) {
     return { count };
   }
 
-  function TimerFlushPolicy(interval) {
+  function TimerFlushPolicy(interval: any) {
     return { interval };
   }
 
@@ -383,7 +396,7 @@ jest.mock('@react-native-cookies/cookies', () => ({
 jest.mock('@metamask/react-native-webview', () => {
   const React = require('react');
   const { View } = require('react-native');
-  return { WebView: (props) => <View {...props} /> };
+  return { WebView: (props: any) => <View {...props} /> };
 });
 
 // Mock @metamask/react-native-search-api
@@ -408,7 +421,7 @@ NativeModules.NotifeeApiModule = {
 };
 
 NativeModules.Aes = {
-  sha256: jest.fn().mockImplementation((address) => {
+  sha256: jest.fn().mockImplementation((address: any) => {
     const uniqueAddressChar = address[2];
     const hashBase = '012345678987654';
     return Promise.resolve(hashBase + uniqueAddressChar);
@@ -436,7 +449,7 @@ jest.mock('@notifee/react-native', () =>
 // Mock Sentry
 jest.mock('@sentry/react-native', () => ({
   init: jest.fn(),
-  wrap: (component) => component,
+  wrap: (component: any) => component,
   captureException: jest.fn(),
   captureMessage: jest.fn(),
   captureUserFeedback: jest.fn(),
@@ -495,14 +508,14 @@ jest.mock('../../store', () => ({
   runSaga: jest
     .fn()
     .mockReturnValue({ toPromise: jest.fn().mockResolvedValue(undefined) }),
-  _updateMockState: (state) => {
+  _updateMockState: (state: any) => {
     mockState = state;
   },
 }));
 
 // Mock react-native-fade-in-image
 jest.mock('react-native-fade-in-image', () => {
-  const FadeIn = ({ children }) => children ?? null;
+  const FadeIn = ({ children }: any) => children ?? null;
   return FadeIn;
 });
 
@@ -614,7 +627,7 @@ jest.mock('react-native/Libraries/TurboModule/TurboModuleRegistry', () => {
 
   return {
     ...originalModule,
-    getEnforcing: (name) => {
+    getEnforcing: (name: any) => {
       if (name === 'RNGestureHandlerModule') {
         return MockRNGH;
       }
@@ -635,7 +648,7 @@ jest.mock('react-native/Libraries/TurboModule/TurboModuleRegistry', () => {
       }
       return originalModule.getEnforcing(name);
     },
-    get: (name) => {
+    get: (name: any) => {
       if (name === 'RNGestureHandlerModule') {
         return MockRNGH;
       }
@@ -657,7 +670,7 @@ jest.mock('react-native/Libraries/TurboModule/TurboModuleRegistry', () => {
 jest.mock('../../components/Base/RemoteImage', () => {
   const React = require('react');
   const { View } = require('react-native');
-  return (props) => <View {...props} testID="mock-remote-image" />;
+  return (props: any) => <View {...props} testID="mock-remote-image" />;
 });
 
 // Mock Braze SDK (ESM-only package; must be transformed via transformIgnorePatterns)
@@ -665,7 +678,7 @@ jest.mock('@braze/react-native-sdk', () => ({
   __esModule: true,
   default: {
     changeUser: jest.fn(),
-    getInitialPushPayload: jest.fn((callback) => {
+    getInitialPushPayload: jest.fn((callback: any) => {
       // Call callback with null payload (no initial push)
       if (typeof callback === 'function') {
         callback(null);

@@ -33,7 +33,7 @@ jest.mock('../BackupVault', () => ({
     Promise.resolve({ success: true, vault: 'fake_vault' }),
 }));
 
-jest.mock('../../util/test/network-store.js', () => jest.fn());
+jest.mock('../../util/test/network-store', () => jest.fn());
 
 // Mock whenEngineReady to prevent Engine access after Jest teardown
 jest.mock('../../util/analytics/whenEngineReady', () => ({

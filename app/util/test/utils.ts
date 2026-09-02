@@ -12,9 +12,12 @@ export const E2E_TEST_CONFIG_GLOBAL_KEY = '__METAMASK_E2E_TEST_CONFIG__';
 // E2E test configuration required in app. Metro/RN can evaluate this module
 // through more than one path during startup, so keep the backing object on
 // globalThis and make every module instance share the same runtime config.
+// @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
 if (!globalThis[E2E_TEST_CONFIG_GLOBAL_KEY]) {
+  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   globalThis[E2E_TEST_CONFIG_GLOBAL_KEY] = {};
 }
+// @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
 export const testConfig = globalThis[E2E_TEST_CONFIG_GLOBAL_KEY];
 
 // SEGMENT TRACK URL for E2E tests - this is not a real URL and is used for testing purposes only

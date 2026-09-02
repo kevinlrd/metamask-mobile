@@ -57,7 +57,7 @@ import {
   AvatarSize,
   AvatarVariant,
 } from '../../../../component-library/components/Avatars/Avatar';
-import { getNetworkImageSource } from '../../../../util/networks/index.js';
+import { getNetworkImageSource } from '../../../../util/networks';
 import {
   EvmAndMultichainNetworkConfigurationsWithCaipChainId,
   getSelectedMultichainNetwork,
