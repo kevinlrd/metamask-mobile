@@ -22,7 +22,7 @@ process.env.IS_TEST = 'true';
 
 module.exports = {
   ...baseConfig,
-  setupFilesAfterEnv: ['<rootDir>/app/util/test/testSetupView.js'],
+  setupFilesAfterEnv: ['<rootDir>/app/util/test/testSetupView.tsx'],
   testPathIgnorePatterns: (baseConfig.testPathIgnorePatterns || []).filter(
     (pattern) => !pattern.includes('view'),
   ),

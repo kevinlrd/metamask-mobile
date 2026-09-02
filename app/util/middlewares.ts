@@ -1,5 +1,33 @@
+/* eslint-disable jsdoc/check-indentation */
 import Logger from './Logger';
 import trackErrorAsAnalytics from './metrics/TrackError/trackErrorAsAnalytics';
+
+interface MiddlewareOptions {
+  origin: string;
+}
+
+interface MiddlewareRequest {
+  isMetamaskInternal?: boolean;
+  origin?: string;
+  params?: unknown[];
+  [key: string]: unknown;
+}
+
+interface RpcError {
+  code?: unknown;
+  data?: {
+    message?: string;
+  };
+  message?: string;
+}
+
+interface MiddlewareResponse {
+  error?: RpcError;
+  [key: string]: unknown;
+}
+
+type EndCallback = () => void;
+type NextCallback = (callback: (end: EndCallback) => void) => void;
 
 /**
  * List of rpc errors caused by the user rejecting a certain action.
@@ -20,11 +48,11 @@ const USER_REJECTED_ERROR_CODE = 4001;
  * @param {{ origin: string }} opts - The middleware options
  * @returns {Function}
  */
-export function createOriginMiddleware(opts) {
+export function createOriginMiddleware(opts: MiddlewareOptions) {
   return function originMiddleware(
-    /** @type {any} */ req,
-    /** @type {any} */ _,
-    /** @type {Function} */ next,
+    req: MiddlewareRequest,
+    _: unknown,
+    next: EndCallback,
   ) {
     req.origin = opts.origin;
 
@@ -43,7 +71,10 @@ export function createOriginMiddleware(opts) {
  * @param {String} errorMessage
  * @returns {boolean}
  */
-export function containsUserRejectedError(errorMessage, errorCode) {
+export function containsUserRejectedError(
+  errorMessage: unknown,
+  errorCode?: unknown,
+): boolean {
   try {
     if (!errorMessage || !(typeof errorMessage === 'string')) return false;
 
@@ -67,20 +98,20 @@ export function containsUserRejectedError(errorMessage, errorCode) {
  * @param {{ origin: string }} opts - The middleware options
  * @returns {Function}
  */
-export function createLoggerMiddleware(opts) {
+export function createLoggerMiddleware(opts: MiddlewareOptions) {
   return function loggerMiddleware(
-    /** @type {any} */ req,
-    /** @type {any} */ res,
-    /** @type {Function} */ next,
+    req: MiddlewareRequest,
+    res: MiddlewareResponse,
+    next: NextCallback,
   ) {
-    next((/** @type {Function} */ cb) => {
+    next((cb) => {
       if (res.error) {
         const { error } = res;
         if (error) {
           if (containsUserRejectedError(error.message, error.code)) {
             trackErrorAsAnalytics(
               `Error in RPC response: User rejected`,
-              error.message,
+              error.message ?? '',
             );
           } else {
             /**

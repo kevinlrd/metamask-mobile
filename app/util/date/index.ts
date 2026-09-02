@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- TODO: Replace legacy date inputs with explicit date value types. */
 import { strings } from '../../../locales/i18n';
 import { MINUTE, HOUR, DAY } from '../../constants/time';
 
-export function toLocaleDateTime(timestamp) {
+export function toLocaleDateTime(timestamp: any) {
   const dateObj = new Date(timestamp);
   const date = dateObj.toLocaleDateString();
   const time = dateObj.toLocaleTimeString();
@@ -13,7 +14,7 @@ export function toLocaleDateTime(timestamp) {
  * @param {number | Date} timestamp
  * @returns string
  */
-export function toDateFormat(timestamp) {
+export function toDateFormat(timestamp: any) {
   const date = new Date(timestamp);
   const month = strings(`date.months.${date.getMonth()}`);
   const day = date.getDate();
@@ -22,17 +23,18 @@ export function toDateFormat(timestamp) {
   const ampm = hours >= 12 ? 'pm' : 'am';
   hours %= 12;
   hours = hours || 12; // the hour '0' should be '12'
+  // @ts-expect-error TS(2322): Type 'string | number' is not assignable to type '... Remove this comment to see the full error message
   minutes = minutes < 10 ? '0' + minutes : minutes;
   return `${month} ${day} ${strings(
     'date.connector',
   )} ${hours}:${minutes} ${ampm}`;
 }
 
-export function toLocaleDate(timestamp) {
+export function toLocaleDate(timestamp: any) {
   return new Date(timestamp).toLocaleDateString();
 }
 
-export function toLocaleTime(timestamp) {
+export function toLocaleTime(timestamp: any) {
   return new Date(timestamp).toLocaleTimeString();
 }
 
@@ -41,7 +43,7 @@ export function toLocaleTime(timestamp) {
  * @param {Date} sessionTime - Date object
  * @returns the difference between two dates in milliseconds
  */
-export function msBetweenDates(date) {
+export function msBetweenDates(date: any) {
   const today = new Date();
   return Math.abs(date.getTime() - today.getTime());
 }
@@ -51,7 +53,7 @@ export function msBetweenDates(date) {
  * @param {number} milliseconds - Milliseconds number
  * @returns how many hours in on a determinated amount of milliseconds
  */
-export function msToHours(milliseconds) {
+export function msToHours(milliseconds: any) {
   return milliseconds / (60 * 60 * 1000);
 }
 
@@ -60,7 +62,7 @@ export function msToHours(milliseconds) {
  * @param {*} timestamp timestamp you wish to convert in milliseconds
  * @returns formatted date yyyy-MM-dd
  */
-export const formatTimestampToYYYYMMDD = (timestamp) => {
+export const formatTimestampToYYYYMMDD = (timestamp: any) => {
   const date = new Date(timestamp);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
@@ -75,7 +77,7 @@ export const formatTimestampToYYYYMMDD = (timestamp) => {
  *
  * @returns object with difference in amount of days, hours, and minutes. If timestamp is in the past, a default value of { days: 0, hours: 0, minutes: 0 } is returned.
  */
-export const getTimeDifferenceFromNow = (timestamp) => {
+export const getTimeDifferenceFromNow = (timestamp: any) => {
   const currentTime = Date.now();
 
   // Default when timestamp is in the past.

@@ -6,7 +6,7 @@ import { toHex } from '@metamask/controller-utils';
 import { formatChainIdToCaip } from '@metamask/bridge-controller';
 import { debounce, type DebouncedFunc } from 'lodash';
 import { useStyles } from '../../../component-library/hooks/index.ts';
-import { isTestNet } from '../../../util/networks/index.js';
+import { isTestNet } from '../../../util/networks';
 import { selectEvmChainId } from '../../../selectors/networkController';
 import {
   selectSelectedNonEvmNetworkChainId,
@@ -85,7 +85,7 @@ jest.mock('../../../component-library/hooks/index.ts', () => ({
   })),
 }));
 
-jest.mock('../../../util/networks/index.js', () => ({
+jest.mock('../../../util/networks', () => ({
   isTestNet: jest.fn(),
 }));
 

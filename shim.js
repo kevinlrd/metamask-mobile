@@ -39,7 +39,7 @@ import {
   isTest,
   enableApiCallLogs,
   testConfig,
-} from './app/util/test/utils.js';
+} from './app/util/test/utils';
 import { WS_SERVICES } from './tests/websocket/constants.ts';
 import { defaultMockPort } from './tests/api-mocking/mock-config/mockUrlCollection.json';
 

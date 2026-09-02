@@ -1,24 +1,29 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, import-x/no-commonjs, @typescript-eslint/no-require-imports, no-empty-function, arrow-body-style, object-shorthand, react/react-in-jsx-scope, prefer-arrow-callback -- TODO: Replace legacy Jest mocks with typed module factories. */
 import { NativeModules, Linking, Keyboard } from 'react-native';
 import mockRNAsyncStorage from '@react-native-async-storage/async-storage/jest/async-storage-mock';
+// @ts-expect-error TS(7016): Could not find a declaration file for module '@rea... Remove this comment to see the full error message
 import mockClipboard from '@react-native-clipboard/clipboard/jest/clipboard-mock.js';
 /* eslint-disable import-x/no-namespace */
 import { mockTheme } from '../theme';
 import base64js from 'base64-js';
 
 // Set up global polyfills for base64 functions
+// @ts-expect-error TS(7017): Element implicitly has an 'any' type because type ... Remove this comment to see the full error message
 global.base64FromArrayBuffer = base64js.fromByteArray;
+// @ts-expect-error TS(7017): Element implicitly has an 'any' type because type ... Remove this comment to see the full error message
 global.base64ToArrayBuffer = base64js.toByteArray;
 
 // Augment RN preset Linking mock with missing methods needed by @react-navigation/native
-Linking.removeEventListener = jest.fn();
+(Linking as any).removeEventListener = jest.fn();
 Linking.openURL = jest.fn().mockResolvedValue(undefined);
 
 // Keyboard.addListener must return a subscription with .remove() for KeyboardAvoidingView
 // We need to patch the prototype/instance method that KeyboardAvoidingView uses
+// eslint-disable-next-line @react-native/no-deep-imports
 const RNKeyboard = require('react-native/Libraries/Components/Keyboard/Keyboard');
 const origAddListener =
   RNKeyboard.default?.addListener || RNKeyboard.addListener;
-const patchedAddListener = jest.fn((...args) => {
+const patchedAddListener = jest.fn((...args: any[]) => {
   try {
     const sub = origAddListener?.call(
       RNKeyboard.default || RNKeyboard,
@@ -68,40 +73,48 @@ jest.mock('expo/fetch', () => {
 });
 
 jest.mock('react-native-quick-crypto', () => ({
-  getRandomValues: jest.fn((array) => {
+  getRandomValues: jest.fn((array: any) => {
     for (let i = 0; i < array.length; i++) {
       array[i] = Math.floor(Math.random() * 256);
     }
     return array;
   }),
   subtle: {
-    importKey: jest.fn((format, keyData, algorithm, extractable, keyUsages) => {
-      return Promise.resolve({
-        format,
-        keyData,
-        algorithm,
-        extractable,
-        keyUsages,
-      });
-    }),
-    deriveBits: jest.fn((algorithm, baseKey, length) => {
+    importKey: jest.fn(
+      (
+        format: any,
+        keyData: any,
+        algorithm: any,
+        extractable: any,
+        keyUsages: any,
+      ) => {
+        return Promise.resolve({
+          format,
+          keyData,
+          algorithm,
+          extractable,
+          keyUsages,
+        });
+      },
+    ),
+    deriveBits: jest.fn((algorithm: any, baseKey: any, length: any) => {
       const derivedBits = new Uint8Array(length);
       for (let i = 0; i < length; i++) {
         derivedBits[i] = Math.floor(Math.random() * 256);
       }
       return Promise.resolve(derivedBits);
     }),
-    exportKey: jest.fn((format, key) => {
+    exportKey: jest.fn((format: any, key: any) => {
       return Promise.resolve(new Uint8Array([1, 2, 3, 4]));
     }),
-    encrypt: jest.fn((algorithm, key, data) => {
+    encrypt: jest.fn((algorithm: any, key: any, data: any) => {
       return Promise.resolve(
         new Uint8Array([
           123, 34, 116, 101, 115, 116, 34, 58, 34, 100, 97, 116, 97, 34, 125,
         ]),
       );
     }),
-    decrypt: jest.fn((algorithm, key, data) => {
+    decrypt: jest.fn((algorithm: any, key: any, data: any) => {
       return Promise.resolve(
         new Uint8Array([
           123, 34, 116, 101, 115, 116, 34, 58, 34, 100, 97, 116, 97, 34, 125,
@@ -115,7 +128,7 @@ jest.mock('react-native-quick-crypto', () => ({
 }));
 
 // Create a persistent mock function that survives Jest teardown
-const mockBatchedUpdates = jest.fn((fn) => {
+const mockBatchedUpdates = jest.fn((fn: any) => {
   if (typeof fn === 'function') {
     return fn();
   }
@@ -158,6 +171,7 @@ if (!ReactNative.BackHandler.removeEventListener) {
 }
 
 // Also mock it globally as a fallback
+// @ts-expect-error TS(7017): Element implicitly has an 'any' type because type ... Remove this comment to see the full error message
 global.unstable_batchedUpdates = mockBatchedUpdates;
 
 // Mock the specific module path that might be causing issues
@@ -174,7 +188,7 @@ jest.mock('react-native/index.js', () => {
 jest.mock('@metamask/react-native-webview', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
   const { View } = require('react-native');
-  const WebView = (props) => <View {...props} />;
+  const WebView = (props: any) => <View {...props} />;
 
   return {
     WebView,
@@ -185,7 +199,7 @@ jest.mock('@metamask/react-native-webview', () => {
 jest.mock('@metamask/react-native-button', () => {
   const { Text, TouchableOpacity, View } = require('react-native');
   const React = require('react');
-  const Button = (props) => {
+  const Button = (props: any) => {
     const { children, style, containerStyle, ...rest } = props;
     return React.createElement(
       TouchableOpacity,
@@ -299,7 +313,7 @@ jest.mock('../../store', () => ({
   runSaga: jest
     .fn()
     .mockReturnValue({ toPromise: jest.fn().mockResolvedValue(undefined) }),
-  _updateMockState: (state) => {
+  _updateMockState: (state: any) => {
     mockState = state;
   },
 }));
@@ -430,6 +444,7 @@ jest.mock('react-native-keychain', () => ({
     storage: 'storage',
   }),
   hasInternetCredentials: jest.fn().mockResolvedValue(true),
+  // @ts-expect-error TS(2708): Cannot use namespace 'jest' as a value.
   resetInternetCredentials: jest.fn().mockResolvedValue(),
 
   // Biometry and authentication functions
@@ -445,6 +460,7 @@ jest.mock('react-native-keychain', () => ({
     username: 'mock-username',
     password: 'mock-password',
   }),
+  // @ts-expect-error TS(2708): Cannot use namespace 'jest' as a value.
   setSharedWebCredentials: jest.fn().mockResolvedValue(),
 
   // Legacy exports for backward compatibility
@@ -478,11 +494,11 @@ jest.mock(
   () => {
     const RuntimeKind = { ReactNative: 0 };
     const NOOP = () => {};
-    const identity = (value) => value;
+    const identity = (value: any) => value;
 
     const runOnJS =
-      (fun) =>
-      (...args) =>
+      (fun: any) =>
+      (...args: any[]) =>
         queueMicrotask(() => (args.length ? fun(...args) : fun()));
 
     return {
@@ -499,8 +515,9 @@ jest.mock(
       getRuntimeKind: () => RuntimeKind.ReactNative,
       createWorkletRuntime: () => NOOP,
       runOnRuntime: identity,
-      runOnRuntimeAsync: async (_runtime, worklet, ...args) => worklet(...args),
-      scheduleOnRuntime: (callback) => callback(),
+      runOnRuntimeAsync: async (_runtime: any, worklet: any, ...args: any[]) =>
+        worklet(...args),
+      scheduleOnRuntime: (callback: any) => callback(),
       createSerializable: identity,
       isSerializableRef: identity,
       serializableMappingCache: new Map(),
@@ -509,14 +526,14 @@ jest.mock(
       executeOnUIRuntimeSync: identity,
       runOnJS,
       runOnUI:
-        (worklet) =>
-        (...args) => {
+        (worklet: any) =>
+        (...args: any[]) => {
           worklet(...args);
         },
-      runOnUIAsync: async (worklet, ...args) => worklet(...args),
-      runOnUISync: (callback) => callback(),
-      scheduleOnRN: (fun, ...args) => runOnJS(fun)(...args),
-      scheduleOnUI: (worklet, ...args) => worklet(...args),
+      runOnUIAsync: async (worklet: any, ...args: any[]) => worklet(...args),
+      runOnUISync: (callback: any) => callback(),
+      scheduleOnRN: (fun: any, ...args: any[]) => runOnJS(fun)(...args),
+      scheduleOnUI: (worklet: any, ...args: any[]) => worklet(...args),
       isWorkletFunction: () => false,
       WorkletsModule: {},
     };
@@ -528,13 +545,13 @@ jest.mock('react-native-mmkv', () => {
   const createInMemoryMMKV = () => {
     const store = new Map();
     return {
-      getString: jest.fn((key) => store.get(key)),
-      set: jest.fn((key, value) => store.set(key, value)),
-      getBoolean: jest.fn((key) => store.get(key)),
-      getNumber: jest.fn((key) => store.get(key)),
-      delete: jest.fn((key) => store.delete(key)),
-      remove: jest.fn((key) => store.delete(key)),
-      contains: jest.fn((key) => store.has(key)),
+      getString: jest.fn((key: any) => store.get(key)),
+      set: jest.fn((key: any, value: any) => store.set(key, value)),
+      getBoolean: jest.fn((key: any) => store.get(key)),
+      getNumber: jest.fn((key: any) => store.get(key)),
+      delete: jest.fn((key: any) => store.delete(key)),
+      remove: jest.fn((key: any) => store.delete(key)),
+      contains: jest.fn((key: any) => store.has(key)),
       clearAll: jest.fn(() => store.clear()),
       getAllKeys: jest.fn(() => [...store.keys()]),
       recrypt: jest.fn(),
@@ -592,7 +609,7 @@ NativeModules.PlatformConstants = {
 };
 
 NativeModules.Aes = {
-  sha256: jest.fn().mockImplementation((address) => {
+  sha256: jest.fn().mockImplementation((address: any) => {
     const uniqueAddressChar = address[2]; // Assuming 0x prefix is present, so actual third character is at index 2
     const hashBase = '012345678987654';
     return Promise.resolve(hashBase + uniqueAddressChar);
@@ -629,9 +646,11 @@ jest.mock('../theme', () => ({
   useAppThemeFromContext: () => ({ ...mockTheme }),
 }));
 
+// @ts-expect-error TS(7017): Element implicitly has an 'any' type because type ... Remove this comment to see the full error message
 global.segmentMockClient = null;
 
 const initializeMockClient = () => {
+  // @ts-expect-error TS(7017): Element implicitly has an 'any' type because type ... Remove this comment to see the full error message
   global.segmentMockClient = {
     screen: jest.fn(),
     track: jest.fn(),
@@ -642,6 +661,7 @@ const initializeMockClient = () => {
     reset: jest.fn(),
     add: jest.fn(),
   };
+  // @ts-expect-error TS(7017): Element implicitly has an 'any' type because type ... Remove this comment to see the full error message
   return global.segmentMockClient;
 };
 
@@ -650,28 +670,28 @@ jest.mock('@segment/analytics-react-native', () => {
     type = 'utility';
     analytics = undefined;
 
-    configure(analytics) {
+    configure(analytics: any) {
       this.analytics = analytics;
     }
   }
 
   class EventPlugin extends Plugin {
-    execute(event) {
+    execute(event: any) {
       return event;
     }
-    identify(event) {
+    identify(event: any) {
       return event;
     }
-    track(event) {
+    track(event: any) {
       return event;
     }
-    screen(event) {
+    screen(event: any) {
       return event;
     }
-    alias(event) {
+    alias(event: any) {
       return event;
     }
-    group(event) {
+    group(event: any) {
       return event;
     }
     flush() {}
@@ -684,13 +704,15 @@ jest.mock('@segment/analytics-react-native', () => {
   }
 
   class CountFlushPolicy {
-    constructor(count) {
+    count: any;
+    constructor(count: any) {
       this.count = count;
     }
   }
 
   class TimerFlushPolicy {
-    constructor(interval) {
+    interval: any;
+    constructor(interval: any) {
       this.interval = interval;
     }
   }
@@ -741,15 +763,15 @@ jest.mock('@notifee/react-native', () =>
 
 jest.mock('react-native/Libraries/Image/resolveAssetSource', () => ({
   __esModule: true,
-  default: (source) => {
+  default: (source: any) => {
     return { uri: source.uri };
   },
 }));
 
 jest.mock('redux-persist', () => ({
   persistStore: jest.fn(),
-  persistReducer: (_, reducer) => {
-    return reducer || ((state) => state);
+  persistReducer: (_: any, reducer: any) => {
+    return reducer || ((state: any) => state);
   },
   createTransform: jest.fn(),
   createMigrate: jest.fn(),
@@ -762,9 +784,9 @@ jest.mock('../../store/storage-wrapper', () => ({
   setItem: jest.fn(),
 }));
 
-// eslint-disable-next-line import/no-commonjs
 const Reanimated = require('react-native-reanimated');
 Reanimated.setUpTests();
+// @ts-expect-error TS(7017): Element implicitly has an 'any' type because type ... Remove this comment to see the full error message
 global.__reanimatedWorkletInit = jest.fn();
 
 // Patch configureReanimatedLogger so tests that import it don't crash.
@@ -783,7 +805,7 @@ try {
 
   const origMakeMutable = mutables.makeMutable;
   if (origMakeMutable) {
-    mutables.makeMutable = function patchedMakeMutable(value) {
+    mutables.makeMutable = function patchedMakeMutable(value: any) {
       const mutable = origMakeMutable(value);
       if (mutable && typeof mutable.toJSON === 'function') {
         mutable.toJSON = () => {
@@ -815,15 +837,15 @@ if (typeof Reanimated.useAnimatedGestureHandler !== 'function') {
   Reanimated.useAnimatedGestureHandler = jest.fn(() => ({}));
 }
 
-global.__DEV__ = false;
+(global as any).__DEV__ = false;
 
 // Custom snapshot serializer to handle Reanimated shared value proxies.
 expect.addSnapshotSerializer({
-  test: (val) =>
+  test: (val: any) =>
     val != null &&
     typeof val === 'object' &&
     val._isReanimatedSharedValue === true,
-  serialize: (val) => {
+  serialize: (val: any) => {
     try {
       const v = val.value;
       return `"SharedValue(${typeof v === 'object' ? JSON.stringify(v) : String(v)})"`;
@@ -842,11 +864,11 @@ jest.mock('../../component-library/components/BottomSheets/BottomSheet', () => {
 
   const BottomSheet = React.forwardRef(
     (
-      { children, onClose, onOpen, shouldNavigateBack = true, ...props },
-      ref,
+      { children, onClose, onOpen, shouldNavigateBack = true, ...props }: any,
+      ref: any,
     ) => {
       // Mimic real BottomSheet: call navigation.goBack() when shouldNavigateBack is true
-      let navigation;
+      let navigation: any;
       try {
         const { useNavigation } = require('@react-navigation/native');
         navigation = useNavigation();
@@ -860,7 +882,7 @@ jest.mock('../../component-library/components/BottomSheets/BottomSheet', () => {
           onClose?.();
           if (shouldNavigateBack) navigation?.goBack();
         },
-        onCloseBottomSheet: (callback) => {
+        onCloseBottomSheet: (callback: any) => {
           onClose?.(!!callback);
           if (shouldNavigateBack) navigation?.goBack();
           callback?.();
@@ -907,15 +929,15 @@ jest.mock('@metamask/design-system-react-native', () => {
         twClassName: _twClassName,
         testID,
         accessibilityLabel,
-      },
-      ref,
+      }: any,
+      ref: any,
     ) => {
       React.useImperativeHandle(ref, () => ({
-        onOpenBottomSheet: (callback) => {
+        onOpenBottomSheet: (callback: any) => {
           onOpen?.();
           callback?.();
         },
-        onCloseBottomSheet: (callback) => {
+        onCloseBottomSheet: (callback: any) => {
           const hasCallback = Boolean(callback);
           onClose?.(hasCallback);
           goBack?.();
@@ -959,7 +981,7 @@ jest.mock('@metamask/design-system-react-native', () => {
 jest.mock('react-native-modal', () => {
   const React = require('react');
   const { View } = require('react-native');
-  const Modal = ({ children, isVisible, testID, ...props }) => {
+  const Modal = ({ children, isVisible, testID, ...props }: any) => {
     if (isVisible === false) return null;
     return React.createElement(
       View,
@@ -1008,11 +1030,11 @@ jest.mock('react-native-safe-area-context', () => {
     ...jest.requireActual('react-native-safe-area-context'),
     SafeAreaInsetsContext: React.createContext(inset),
     SafeAreaFrameContext: React.createContext(frame),
-    SafeAreaView: ({ children, ...props }) =>
+    SafeAreaView: ({ children, ...props }: any) =>
       React.createElement(View, props, children),
-    SafeAreaProvider: ({ children, ...props }) =>
+    SafeAreaProvider: ({ children, ...props }: any) =>
       React.createElement(View, props, children),
-    SafeAreaConsumer: ({ children }) => children(inset),
+    SafeAreaConsumer: ({ children }: any) => children(inset),
     useSafeAreaInsets: () => inset,
     useSafeAreaFrame: () => frame,
   };
@@ -1021,7 +1043,7 @@ jest.mock('react-native-safe-area-context', () => {
 jest.mock(
   'react-native-keyboard-controller',
   () => ({
-    KeyboardProvider: ({ children }) => children,
+    KeyboardProvider: ({ children }: any) => children,
     KeyboardAwareScrollView: require('react-native').ScrollView,
     KeyboardGestureArea: require('react-native').View,
     KeyboardStickyView: require('react-native').View,
@@ -1036,7 +1058,7 @@ jest.mock(
     }),
     useKeyboardHandler: () => {},
     useGenericKeyboardHandler: () => {},
-    useKeyboardState: (selector) => {
+    useKeyboardState: (selector: any) => {
       const defaultState = {
         isVisible: false,
         height: 0,
@@ -1067,7 +1089,7 @@ jest.mock(
 // throw "Couldn't find a navigation context" when accessed. pretty-format triggers
 // these getters during snapshot serialization, causing tests to fail.
 expect.addSnapshotSerializer({
-  test: (val) =>
+  test: (val: any) =>
     val != null &&
     typeof val === 'object' &&
     val.isDefault === true &&
@@ -1080,10 +1102,12 @@ afterEach(() => {
   global.gc && global.gc(true);
 });
 
+// @ts-expect-error TS(2739): Type '{ getRandomValues: <T extends ArrayBufferVie... Remove this comment to see the full error message
 global.crypto = {
   getRandomValues: (arr) => {
     const uint8Max = 255;
-    for (let i = 0; i < arr.length; i++) {
+    for (let i = 0; i < (arr as any).length; i++) {
+      // @ts-expect-error TS(2531): Object is possibly 'null'.
       arr[i] = Math.floor(Math.random() * (uint8Max + 1));
     }
     return arr;
@@ -1094,7 +1118,7 @@ global.crypto = {
 jest.mock('@sentry/react-native', () => ({
   // Core methods
   init: jest.fn(),
-  wrap: (component) => component,
+  wrap: (component: any) => component,
 
   // Capture methods
   captureException: jest.fn(),
@@ -1186,7 +1210,7 @@ jest.mock('react-native/Libraries/TurboModule/TurboModuleRegistry', () => {
     'react-native/Libraries/TurboModule/TurboModuleRegistry',
   );
   return {
-    getEnforcing: (name) => {
+    getEnforcing: (name: any) => {
       if (name === 'RNGestureHandlerModule') {
         return {
           attachGestureHandler: jest.fn(),
@@ -1230,7 +1254,7 @@ jest.mock('react-native/Libraries/TurboModule/TurboModuleRegistry', () => {
       }
       return originalModule.getEnforcing(name);
     },
-    get: (name) => {
+    get: (name: any) => {
       if (name === 'RNGestureHandlerModule') {
         return {
           attachGestureHandler: jest.fn(),

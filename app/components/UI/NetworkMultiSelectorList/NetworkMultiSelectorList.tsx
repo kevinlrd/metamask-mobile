@@ -30,7 +30,7 @@ import Cell, {
 import Text, {
   TextVariant,
 } from '../../../component-library/components/Texts/Text/index.ts';
-import { isTestNet } from '../../../util/networks/index.js';
+import { isTestNet } from '../../../util/networks';
 import hideProtocolFromUrl from '../../../util/hideProtocolFromUrl';
 import hideKeyFromUrl from '../../../util/hideKeyFromUrl';
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- TODO: Type the injected native device module. */
 'use strict';
 
 import { Dimensions, Platform } from 'react-native';
@@ -24,7 +25,7 @@ export default class Device {
    * before comparison so the helper remains safe across platforms while preserving component-wise
    * numeric comparison semantics.
    */
-  static comparePlatformVersionTo(referenceVersion) {
+  static comparePlatformVersionTo(referenceVersion: any) {
     return compareVersions(String(Platform.Version), String(referenceVersion));
   }
 
