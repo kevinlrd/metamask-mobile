@@ -19,7 +19,8 @@ Linking.openURL = jest.fn().mockResolvedValue(undefined);
 
 // Keyboard.addListener must return a subscription with .remove() for KeyboardAvoidingView
 // We need to patch the prototype/instance method that KeyboardAvoidingView uses
-const {Keyboard} = require('react-native');
+// eslint-disable-next-line @react-native/no-deep-imports
+const RNKeyboard = require('react-native/Libraries/Components/Keyboard/Keyboard');
 const origAddListener =
   RNKeyboard.default?.addListener || RNKeyboard.addListener;
 const patchedAddListener = jest.fn((...args: any[]) => {
